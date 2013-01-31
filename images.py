@@ -1,4 +1,4 @@
-import pygame, os
+import pygame, os, math
 from pygame.locals import *
 from config import *
 
@@ -60,3 +60,11 @@ def get_text_center_offset(text, width):
 
 def get_text_size(text):
 	return WINDOW_FONT.size(text)
+
+def get_step(xy1, xy2, step = 4):
+	x, y = xy1[0] - xy2[0], xy1[1] - xy2[1]
+	length = math.hypot(x, y)
+	if length > step * 10 or length < step:
+		return x, y
+	n_vec = int(round(x / length)), int(round(y / length))
+	return n_vec[0] * step, n_vec[1] * step

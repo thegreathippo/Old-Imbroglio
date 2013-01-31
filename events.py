@@ -48,6 +48,7 @@ class MoveEntity(Event):
 			return
 		game.session.world[0].entities[pos] = entity 
 		CalculateFov(entity)
+		game.stack[0].entities[entity].move(pos)
 
 
 def init(game):

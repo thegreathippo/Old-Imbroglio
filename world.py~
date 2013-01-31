@@ -1,5 +1,6 @@
 from nodes import GeoGraph, GeoNode
 from generator import Block
+import random
 
 class World(object):
 	def __init__(self):
@@ -22,14 +23,14 @@ class Area(object):
 				self.terrain[point] = GeoNode(point)
 			for point in zone.wall:
 				self.features[point] = GeoNode(point)
+		possible_points = set(self.terrain.data).difference(set(self.features.data))
+		for point in possible_points:
+			if random.randrange(0,10) == 0:
+				self.entities[point] = GeoNode(point)
 		self.fov_mask = self.features.get_mask()
 	def get_nodes(self, mask):
 		result = set()
-		for point in mask:
-			if point in self.terrain:
-				result.add(self.terrain[point])
-			if point in self.features:
-				result.add(self.features[point])
-			if point in self.entities:
-				result.add(self.entities[point])
+		result.update(self.terrain.get_nodes(mask))
+		result.update(self.features.get_nodes(mask))
+		result.update(self.entities.get_nodes(mask))
 		return result
