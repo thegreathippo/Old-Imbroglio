@@ -146,4 +146,6 @@ class Mask(object):
 		return iter(self.points)
 	def __contains__(self, point):
 		return point in self.points
+	def copy(self):
+		return Mask(self.points)
 

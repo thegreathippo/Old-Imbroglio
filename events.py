@@ -86,8 +86,12 @@ class MoveEntity(Event):
 		game.session.world[0].entities[pos] = entity 
 		CalculateFov(entity)
 		if entity in game.stack[0].entities:
-			game.stack[0].entities[entity].move(pos)
-		SpendTime(entity, 5)
+			game.stack[0].entities[entity].add_to_path(pos)
+		if game.stack.focus == entity:
+			SpendTime(entity, 5)
+		else:
+			SpendTime(entity, 4)
+
 
 
 def init(game):
