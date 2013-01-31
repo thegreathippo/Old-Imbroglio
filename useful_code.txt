@@ -1,0 +1,79 @@
+class DungeonBlock(Block):
+	def build_dungeon(self):
+
+
+	def split_to_size(self, size = 2500):
+		completed = set()
+		while True:
+			breakable_blocks = self.get_leaves().difference(completed)
+			if breakable_blocks == set(): break
+			for leaf in breakable_blocks:
+				if len(leaf.points) < size:
+					completed.add(leaf)
+				else:
+					blocks = leaf.random_split()
+					branches = [BranchBlock(block.points, leaf) for block in blocks]
+					for branch in branches:
+						branch.adjacent = set(branches)	
+
+
+
+			if block.direction == (0,1):
+				line = build_line(block.center, block.midbottom)
+			if block.direction == (0,-1):
+				line = build_line(block.center, block.midtop)
+			if block.direction == (1,0):
+				line = build_line(block.center, block.midright)
+			if block.direction == (-1,0):
+				line = build_line(block.center, block.midleft)
+			self.paths1.update(line)
+			parents.add(block.parent)
+		print str(parents)
+		print str(len(parents))
+		for parent in parents:
+			grandparents.add(parent.parent)
+		print str(grandparents)
+		print str(len(grandparents))
+#		for block in self.tree.get_parents():
+#			print str(block.children)
+#			if block.direction == (0,1):
+#				line = build_line(block.center, block.midbottom)
+#			if block.direction == (0,-1):
+#				line = build_line(block.center, block.midtop)
+#			if block.direction == (1,0):
+#				line = build_line(block.center, block.midright)
+#			if block.direction == (-1,0):
+#				line = build_line(block.center, block.midleft)
+#			self.paths2.update(line)			
+
+
+		for zone in self.dungeon.zones:
+			for point in zone.floor:
+				xy = point[0] * 3, point[1] * 3
+				pygame.draw.rect(self.screen, zone.color, (xy,(2,2)))
+			for structure in zone.structures:
+				for point in structure.floor:
+					xy = point[0] * 3, point[1] * 3
+					pygame.draw.rect(self.screen, structure.color, (xy,(2,2)))
+				for point in structure.special:
+					xy = point[0] * 3, point[1] * 3
+					pygame.draw.rect(self.screen, (250,250,250), (xy,(2,2)))
+#		for zone in self.dungeon.zones:
+#			for region in zone.regions:
+#				for point in region.fill().intersection(zone.neighborhood):
+#					if len(region.connections) == 1: color = (255,25,25)
+#					if len(region.connections) == 2: color = (25,25,255)
+#					if len(region.connections) > 2: break
+#					if len(region.connections) == 0: break
+#					xy = point[0] * 3, point[1] * 3
+#					pygame.draw.rect(self.screen, color, (xy,(2,2)))
+		for block in self.dungeon.regions:
+			for edge in block.connections:
+				if hasattr(edge, 'pos'):
+					xy = edge.pos.x * 3, edge.pos.y * 3
+					if len(edge.node.connections) == 1:
+						pygame.draw.rect(self.screen, (250,25,250),(xy,(2,2)))
+					if len(edge.node.connections) == 2:
+						pygame.draw.rect(self.screen, (250,250,25),(xy,(2,2)))
+					if len(edge.node.connections) > 2:
+						pygame.draw.rect(self.screen, (25,250,250),(xy,(2,2)))

@@ -1,0 +1,22 @@
+regions.Vec2
+
+Internal 2-D vector object (to make vector calculations easier).
+
+regions.Vec2(xy) : return Vec2
+regions.Vec2(x, y) : return Vec2
+regions.Vec2(Vec2(xy)) : return Vec2
+regions.Vec2(Vec2(x,y)) : return Vec2
+
+Vec2.get_length :		returns the length of a vector.
+
+Vec2 objects support basic arithmetic operations in the usual linear algebra format--addition, subtraction, multiplication, division, negation, and absolute value operations performed on Vec2 objects will return new Vec2 objects with updated values. Multiplication and division are treated as scalars (Vec2 objects should not be multiplied/divided by other Vec2 objects). Vec2 objects with equivalent internal values will also pass equality/inequality tests, but do _not_ have equivalent hash values--so you should never use a Vec2 object when testing whether or not a point (tuple) is contained within a set of points (tuples). For this reason, when accessing a Vec2 object for any purpose outside of interacting with another Vec2 object, it is recommended you directly access its internal 'xy' attribute (which is a tuple containing its xy value). Vec2 objects also have __getitem__ constructors, so feel free to treat them as tuples (Vec2[0] will get you its first value, and Vec2[1] will get you its second). Just don't _confuse_ them with tuples, because they are absolutely _not_ the same thing.
+
+Vec2 objects contain the following attributes (set at initialization). Changing these values is a very bad idea--just create a new Vec2 object instead.
+
+xy, x, y : A Vec2 object's xy (tuple), x (integer) and y (integer) values, respectively.
+
+Vec2.get_length
+	returns the length of a vector.
+
+	Returns the length of a vector, calculated via python's math.hypot method.
+

@@ -1,0 +1,122 @@
+regions.Region
+
+The basic unit of a two dimensional space.
+
+regions.Region((left, top), (width, height)): return Region
+
+Region.fill : 			returns all points a given region contains
+Region.search_up :		returns the 'highest' root of a region
+Region.search_down :		returns a region's leaves (its childless children), or itself if it has no children
+Region.move : 			returns a region 'displaced' by a given vector
+Region.expand : 		returns a region that is larger by a specified value
+Region.is_adjacent :		tests to see if a region is adjacent to another region
+Region.contains_point :		tests to see if a region contains a point
+Region.overlaps :		tests to see if a region overlaps another region
+Region.search_by_overlap :	returns all regions that overlap with a given region
+Region.search_by_proximity : 	returns all regions within a specified distance of a given region
+Region.get_random_point :	returns a random point (from near-center) within a region
+Region.pick_axis :		picks an axis based on region's values
+Region.slice_axis :		splits a region into two 'sub-regions'
+Region.split_to_size :		splits a region into multiple sub-regions
+
+Each Region object begins as the root of a BSP tree containing only itself. The generator works by 'splitting' a Region object into a certain number of Region objects--all of which are stored as children of the initial Region object. The leaves of a given Region object can be acquired at any time by calling its 'search_down()' method; the (ultimate) root can be found by calling its 'search_up()' method, and its parent can be found in its parent attribute (all Region objects produced outside of a split have 'False' set in their parent attribute).
+
+The following attributes are set by a Region object at initialization. Modifying these values is never a good idea (just create a new Region object):
+
+top, left, bottom, right -- Integers that represent the x or y position of each respective side.
+topleft, bottomleft, topright, bottomright, center - Vec2 objects that represent the xy position of each respective corner and the (approximate) center.
+size - A Vec2 object that represents the size (the vector from the top left of a Region to its bottom right) of a Region. 
+width, height -- Integers that represent the width and height of a Region.
+short, long -- Integers that represent the 'size' of the shortest and longest side (respectively).
+
+
+
+
+Region.fill
+	returns all points a given region contains
+	Region.fill(): return set
+
+	Returns a set of points (as tuples) that the called region contains.
+
+
+Region.search_up
+	returns the 'highest' root of a region
+	Region.search_up(): return Region
+
+	Searches up a region's tree, seeking the first parent who's parent is False (it has no parents). If called by a region with no parent, it will return the region itself.
+
+
+Region.search_down
+	returns a region's leaves (its childless children), or itself if it has no children. 
+	Region.search_down(): return set
+
+	Searches down a region's tree, seeking child regions that have no children and returning a set containing those children. If called by a ergion with no children, it will return a set containing the region itself.
+
+
+Region.move 
+	returns a region 'displaced' by a given vector.
+	Region.move((x,y)) : return Region
+
+	Returns a region moved by a given amount specified by the x and y values supplied to it. Said region will be the same size as the region the method was called upon.
+
+Region.expand
+	returns a region that is larger by a specified value
+	Region.expand(value = 1) : return Region
+
+	Returns a region expanded by a given value. The center of the region will be preserved. Expansion occurs on both sides -- so a value of 1 will increase a region's size by 2, and a value of 2 will increase a region's size by 4.
+
+Region.is_adjacent 
+	tests to see if a region is adjacent to another region
+	Region.is_adjacent(Region) : return tuple or None
+
+	Tests to see if a region is adjacent to another region (by calling the region's move method once in all four cardinal directions and testing to see if the resulting region overlaps). If it is, it returns the axis of adjacency as a tuple; if it is adjacent to the right, it would return (-1,0) -- if it was adjacent above, it would return (0, 1). If no adjacency is detected, it returns None.
+
+Region.contains_point 
+	tests to see if a region contains a point
+	Region.contains_point(tuple) : return True or False
+
+	Tests to see if a region contains a given point.
+
+Region.overlaps
+	tests to see if a region overlaps another region
+	Region.overlaps(Region) : return True or False
+
+	Tests to see if a region overlaps (shares points) with another region.
+
+Region.search_by_overlap 	
+	returns all regions that overlap with a given region
+	Region.search_by_overlap(Region) : return set
+
+	Performs a BSP search from the called region down, collecting each childless region that overlaps with the given region in a set and ending by returning the set. If called on a region with no children, it will automatically return a set containing the region it was called upon (regardless of whether or not the region overlaps with the given region).
+
+Region.search_by_proximity
+	returns all regions within a specified distance of a given region
+	Region.search_by_proximity(Region, value = 1) : return set
+
+	A variation on search_by_overlap that takes a given region, produces a new region expanded by the given value, then returns all regions that overlap with the new expanded region. Used for large-scale adjacency tests.
+
+Region.get_random_point 
+	returns a random point (from near-center) within a region
+	Region.get_random_point() : return tuple or False
+
+	Returns a random point from within a 'central circle' of the region (a circle that starts at a region's center and has a radius of the region's shortest side divided by 4). If a region's shortest side is less than 6, returns False.
+
+Region.pick_axis 
+	picks an axis based on region's values
+	Region.pick_axis() : return True or False
+
+	Determines which axis to split. Used mostly for internal purposes (to prevent regions from being split along their shortest side).
+
+Region.slice_axis 
+	splits a region into two 'sub-regions'
+	Region.slice_axis() : return set or False
+
+	Slices a region into two regions, returning a set containing those two regions. Assigns the new regions as the called region's children and the called region as the new regions' parent. In cases where regions cannot be sliced any farther, returns False. 
+
+Region.split_to_size 
+	splits a region into multiple sub-regions
+	Region.split_to_size(max_size = 750) : return set
+
+	Performs slice_axis operations on the called region (and all of its resulting children) until the product cannot be sliced any farther (either because slice_axis returned False or all the resulting childless regions have a number of points less than the max_size). Returns a set consisting of all the childless regions (leaves) resulting from this.
+
+
