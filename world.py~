@@ -25,7 +25,11 @@ class Area(object):
 		self.fov_mask = self.features.get_mask()
 	def get_nodes(self, mask):
 		result = set()
-		result.update(self.terrain.get_nodes(mask))
-		result.update(self.features.get_nodes(mask))
-		result.update(self.entities.get_nodes(mask))
+		for point in mask:
+			if point in self.terrain:
+				result.add(self.terrain[point])
+			if point in self.features:
+				result.add(self.features[point])
+			if point in self.entities:
+				result.add(self.entities[point])
 		return result
