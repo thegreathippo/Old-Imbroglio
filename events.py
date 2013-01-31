@@ -1,16 +1,12 @@
+import random
+
+NEUMANN = [(1,0), (-1,0), (0,1), (0,-1)]
+
 class EventQueue(object):
 	def __init__(self):
 		self.game_events = []
-		self.gui_events = []
 	def apply(self):
-		self.apply_gui_events()
 		self.apply_game_events()
-	def apply_gui_events(self):
-		for event in list(self.gui_events):
-			event.apply(self.owner)
-			self.gui_events.remove(event)
-		if self.gui_events != []:
-			self.apply_gui_events()
 	def apply_game_events(self):
 		for event in list(self.game_events):
 			event.apply(self.owner)
@@ -18,7 +14,34 @@ class EventQueue(object):
 		if self.game_events != []:
 			self.apply_game_events()
 
+class TurnQueue(object):
+	def __init__(self):
+		self.order = []
+		self.global_time = 0
+	def __iter__(self):
+		return iter(self.order)
+	def set_entities(self, entities):
+		self.order = list(entities)
+		self.sort()
+	def sort(self):
+		random.shuffle(self.order)
+		self.order.sort(key=lambda entity: entity.time, reverse = True)
+		if self.order[0].time < 0:
+			self.return_time(-1 * self.order[0].time)
+			self.sort()
+	def return_time(self, time):
+		self.global_time += time
+		for entity in self.order:
+			entity.time += time
+	def apply(self):
+		while self.order[0] != self.owner.stack.focus:
+			EntityTurn(self.order[0])
+			self.owner.event_queue.apply()
+			self.sort()
+
+
 event_queue = EventQueue()
+turn_queue = TurnQueue()
 
 class EventHandler(object):
 	def move_entity(self, entity, rel):
@@ -28,13 +51,27 @@ class EventHandler(object):
 class Event(object):
 	def __init__(self, *args):
 		self.owner = event_queue
-		self.owner.gui_events.append(self)
+		self.owner.game_events.append(self)
 		self.args = args
 
 class CalculateFov(Event):
 	def apply(self, game):
 		obj = self.args[0]
 		obj.set_fov(game.session.world[0].fov_mask)
+
+class SpendTime(Event):
+	def apply(self, game):
+		entity, time = self.args[0], self.args[1]
+		entity.time += -time
+		if entity == game.stack.focus:
+			game.turn_queue.sort()
+
+
+class EntityTurn(Event):
+	def apply(self, game):
+		entity, rel = self.args[0], random.choice(NEUMANN)
+		MoveEntity(entity, rel)
+
 
 class MoveEntity(Event):
 	def apply(self, game):
@@ -48,9 +85,14 @@ class MoveEntity(Event):
 			return
 		game.session.world[0].entities[pos] = entity 
 		CalculateFov(entity)
-		game.stack[0].entities[entity].move(pos)
+		if entity in game.stack[0].entities:
+			game.stack[0].entities[entity].move(pos)
+		SpendTime(entity, 5)
 
 
 def init(game):
 	event_queue.owner = game
-	game.event_queue = event_queue	
+	game.event_queue = event_queue
+	turn_queue.owner = game
+	game.turn_queue = turn_queue
+	

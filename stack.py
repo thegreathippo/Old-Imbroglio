@@ -87,8 +87,8 @@ class GUIStack(object):
 				if len(args) == 1: fired = func(args[0])
 				if len(args) == 2: fired = func(args[0], args[1])
 				if len(args) == 3: fired = func(args[0], args[1], args[2])
-				if fired == True or state.data['locked'] == True: break
-
+				if fired == True: break
+			if state.locked == True: break	
 	def draw(self):
 		pygame.display.update(self.dirty_rects)
 	def tick(self):

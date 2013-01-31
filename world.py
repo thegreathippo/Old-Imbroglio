@@ -25,8 +25,9 @@ class Area(object):
 				self.features[point] = GeoNode(point)
 		possible_points = set(self.terrain.data).difference(set(self.features.data))
 		for point in possible_points:
-			if random.randrange(0,50) == 0:
+			if random.randrange(0,100) == 0:
 				self.entities[point] = GeoNode(point)
+		print str(len(self.entities.nodes))
 		self.fov_mask = self.features.get_mask()
 	def get_nodes(self, mask):
 		result = set()

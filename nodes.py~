@@ -80,6 +80,12 @@ class GeoGraph(object):
 			node.pos = pos
 	def get_mask(self):
 		return Mask(self.data.keys())
+	def get_nodes(self, mask):
+		result = set()
+		points = set(self.data).intersection(mask.points)
+		for point in points:
+			result.add(self[point])
+		return result	
 
 class RectGraph(pygame.Rect):
 	def __init__(self, size = (1,1)):

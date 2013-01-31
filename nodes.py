@@ -21,6 +21,7 @@ class GeoNode(Node):
 		self.properties = dict(properties)
 		self._pos = pos
 		self.fov = Mask()
+		self.time = 0
 		self.init()
 	def set_fov(self, mask, max_radius = 10):
 		points = set()
