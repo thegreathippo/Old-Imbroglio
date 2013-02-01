@@ -13,14 +13,16 @@ class GUIStack(object):
 		self.cell = self.rect.size[0] / 20
 		self.cell_size = self.cell, self.cell
  		pygame.display.flip()
-		self.stack = [GameMap(self, area = self.owner.session.world[0], bcolor = (0,0,0), focus = self.owner.session.player)]
-		self.stack.append(Cursor(self))
+		self.stack = []
+		self.stack.append(GameMap(self, area = self.owner.session.world[0], bcolor = (0,0,0), focus = self.owner.session.player))
+		self.stack.append(Cursor(self, node = None))
 		self.focus = self.owner.session.player
-		self.add(Menu(self, bcolor = (75,75,40), pos = (10,5), size = (10,10),\
-				choices = ['NEW GAME', 'LOAD GAME', 'OPTIONS'], \
-				title = 'IMBROGLIO', commands = ['new_game', 'load_game', 'options'], \
-				color = (160,160,160), hcolor = (50,50,200), descriptions = ['Start a\
-				new game', 'Load a previous game', 'Option menu for game'], locked = True))
+		self.add(Inventory(self, bcolor = (75,75,40), pos = (14,5), size = (5,5)))
+#		self.add(Menu(self, bcolor = (75,75,40), pos = (10,5), size = (10,10),\
+#				choices = ['NEW GAME', 'LOAD GAME', 'OPTIONS'], \
+#				title = 'IMBROGLIO', commands = ['new_game', 'load_game', 'options'], \
+#				color = (160,160,160), hcolor = (50,50,200), descriptions = ['Start a\
+#				new game', 'Load a previous game', 'Option menu for game']))
 	def __iter__(self):
 		return iter(reversed(self.stack))
 	def __getitem__(self, index):

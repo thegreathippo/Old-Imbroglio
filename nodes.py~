@@ -2,7 +2,6 @@ import math, pygame, random
 from fov import fov
 
 
-
 class Node(object):
 	def __init__(self, properties = None):
 		if properties is None: properties = {}
@@ -48,11 +47,9 @@ class GeoNode(Node):
 	x = property(get_x, __setx, None, "gets or sets the x value of a GeoNode")
 	y = property(get_y, __sety, None, "gets or sets the y value of a GeoNode")
 
- 
-class RectNode(pygame.Rect, Node):
-	def __init__(self, pos, size, properties = None):
-		Node.__init__(self, properties)
-		pygame.Rect.__init__(self, pos, size)
+class EntityNode(GeoNode):
+	def init(self):
+		self.inventory = RectGraph((5,5))
 
 class GeoGraph(object):
 	def __init__(self, nodes = None):
@@ -88,17 +85,17 @@ class GeoGraph(object):
 			result.add(self[point])
 		return result	
 
-class RectGraph(pygame.Rect):
+class RectGraph(object):
 	def __init__(self, size = (1,1)):
-		pygame.Rect.__init__(self, (0,0), size)
+		self.rect = pygame.Rect((0,0), size)
 		self.nodes = set()
 		self.data = {}
-		for x in range(0,self.width):
-			for y in range(0,self.height):
+		for x in range(0,self.rect.width):
+			for y in range(0,self.rect.height):
 				if random.randrange(0, 2) == 0:
 					self.data[(x,y)] = None
 				else:
-					self.data[(x,y)] = GeoNode((x,y),D_ITEM)
+					self.data[(x,y)] = GeoNode((x,y))
 	def __iter__(self):
 		return iter(self.data)
 	def __contains__(self, pos):
@@ -135,7 +132,7 @@ class RectGraph(pygame.Rect):
 		space = 0
 		for pos in self:
 			if self[pos] == None: space+=1
-		return space	
+		return space
 
 class Mask(object):
 	def __init__(self, points = None):
@@ -146,4 +143,6 @@ class Mask(object):
 		return iter(self.points)
 	def __contains__(self, point):
 		return point in self.points
+	def copy(self):
+		return Mask(self.points)
 

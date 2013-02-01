@@ -46,6 +46,8 @@ turn_queue = TurnQueue()
 class EventHandler(object):
 	def move_entity(self, entity, rel):
 		MoveEntity(entity, rel)
+	def throw_item(self, thrower, item, terrain):
+		print str(thrower) + " threw a " + str(item) + " at " + str(terrain) + "!"
 	
 
 class Event(object):

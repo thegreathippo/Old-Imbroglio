@@ -24,7 +24,7 @@ class GameMap(Widget):
 		new_nodes = new_terrain.difference(old_terrain)
 		dead_nodes = old_terrain.difference(new_terrain)
 		for node in new_nodes:
-			terrain = Terrain(self, pos = (node.x * self.parent.cell, node.y * self.parent.cell))
+			terrain = Terrain(self, pos = (node.x * self.parent.cell, node.y * self.parent.cell), owner = node)
 			self.terrain[node] = terrain
 			rects.append(terrain.rect)
 		for node in dead_nodes:
@@ -35,7 +35,7 @@ class GameMap(Widget):
 		new_nodes = new_features.difference(old_features)
 		dead_nodes = old_features.difference(new_features)
 		for node in new_nodes:
-			feature = Feature(self, pos = (node.x * self.parent.cell, node.y * self.parent.cell))
+			feature = Feature(self, pos = (node.x * self.parent.cell, node.y * self.parent.cell), owner = node)
 			self.features[node] = feature
 			rects.append(feature.rect)
 		for node in dead_nodes:
@@ -46,7 +46,7 @@ class GameMap(Widget):
 		new_nodes = new_entities.difference(old_entities)
 		dead_nodes = old_entities.difference(new_entities)
 		for node in new_nodes:
-			entity = Entity(self, pos = (node.x * self.parent.cell, node.y * self.parent.cell))
+			entity = Entity(self, pos = (node.x * self.parent.cell, node.y * self.parent.cell), owner = node)
 			self.entities[node] = entity
 			rects.append(entity.rect)
 		for node in dead_nodes:
@@ -57,6 +57,10 @@ class GameMap(Widget):
 		if rects is None: rects = [self.rect]
 		self.draw(self.parent.display)
 		self.parent.dirty_rects += rects
+		for gui in self.parent.stack:
+			if gui == self: continue
+			if gui.rect.collidelist(rects) != -1:
+				gui.refresh()
 	def draw(self, screen):
 		self.image.fill(self.bcolor)
 		for child in self.terrain.values():
@@ -85,6 +89,13 @@ class GameMap(Widget):
 			if self.commands[0] == 4:
 				self.handler.move_entity(self.focus,(1,0))		
 			self.commands.pop(0)
+	def cursor_lclick(self, cursor):
+		if cursor.node != None:
+			for sprite in self.terrain.values():
+				if sprite.contains_point(cursor.rect.center):
+					self.handler.throw_item(self.focus, cursor.node, sprite.owner)
+					cursor['node'] = None
+					cursor.reset()
 	def tick(self, focus):
 		camera = (self.focus.x - 9) * self.parent.cell, (self.focus.y - 9) * self.parent.cell
 		refresh = False
@@ -103,7 +114,7 @@ class GameMap(Widget):
 			step = get_step(camera, self.camera, self.parent.cell / 3)
 			self.camera = self.camera[0] + step[0], self.camera[1] + step[1]
 		if refresh: self.refresh()
-		self.apply_command()
+		if self.entities[self.focus].moving == False: self.apply_command()
 
 
 
@@ -112,6 +123,9 @@ class Terrain(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
 		self.image = pygame.transform.scale(load_image('floor.bmp'),self.rect.size)
+	def translate(self, pos):
+		return pos[0] + self.parent.camera[0], pos[1] + self.parent.camera[1]
+
 class Feature(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)

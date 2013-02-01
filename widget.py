@@ -58,11 +58,20 @@ class Label(Widget):
 		self.image = get_text(self.text, self.color)
 
 class TextBox(Widget):
-	def init(self, **kwargs):
+	def init(self):
 		self.owner = self.parent.parent
 		width, height = self.parent.rect.width - (self.owner.cell), self.owner.cell * 5
 		self.rect = pygame.Rect(self.pos, (width, height))
 		self.image = blit_text(format_lines(self.text, self.rect.size), self.color)
+
+class Cell(Widget):
+	def init(self):
+		self.owner = self.parent.parent
+		width, height = self.owner.cell, self.owner.cell
+		self.rect = pygame.Rect(self.pos, (width, height))
+		self.image = get_surface(self.rect.size, (30,30,30))
+		if self.node != None:
+			self.image.blit(load_image('potion.bmp', -1),(0,0))
 
 		 		
 

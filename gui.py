@@ -26,7 +26,6 @@ class GUI(Widget):
 class Cursor(GUI):
 	def init(self):
 		self.children = set()
-		self.node = None
 		pos, size = pygame.mouse.get_pos(), self.parent.cell_size
 		self.rect = pygame.Rect(pos, size)
 		self.image = get_surface(self.rect.size)
@@ -44,6 +43,38 @@ class Cursor(GUI):
 	def tick(self, focus):
 		self.refresh()
 
+class Inventory(GUI):
+	def init(self):
+		self.children = set()
+		graph = self.parent.focus.inventory
+		offset = graph.rect.width + 1, graph.rect.height + 1
+		for slot in graph:
+			xy = slot[0] * self.parent.cell + (slot[0] + 1), slot[1] * self.parent.cell + (slot[1] + 1)
+			cell = Cell(self, pos = xy, node = self.parent.focus.inventory[slot])
+			self.children.add(cell)
+		size = graph.rect.width * self.parent.cell + offset[0], graph.rect.height * self.parent.cell + offset[1]
+		pos = self.pos[0] * self.parent.cell, self.pos[1] * self.parent.cell
+		self.rect = pygame.Rect(pos, size)
+		self.image = get_surface(self.rect.size, self.bcolor)
+		self.refresh()
+	def cursor_lclick(self, cursor):
+		if self.contains_point(cursor.rect.center) == False: return
+		for child in self.children:
+			if child.contains_point(cursor.rect.center): 
+				if cursor.node != None and child.node == None:
+					child['node'] = cursor.node
+					cursor['node'] = None
+					child.reset()
+					cursor.reset()
+					self.parent.refresh()
+				elif cursor.node == None and child.node != None:
+					cursor['node'] = child['node']
+					child['node'] = None
+					child.reset()
+					cursor.reset()
+					self.parent.refresh()
+		return True
+		
 class Menu(GUI):
 	def init(self):
 		self.children = set()
@@ -82,7 +113,8 @@ class Menu(GUI):
 			else: self.selected -= 1
 		elif key==9:
 			return self.select()
-		self.refresh()	
+		self.refresh()
+		return True
 	def cursor_hover(self, cursor):
 		if self.contains_point(cursor.rect.center) == False: return
 		if self.choices[self.selected].contains_point(cursor.rect.center): return

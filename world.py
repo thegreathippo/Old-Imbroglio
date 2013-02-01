@@ -1,4 +1,4 @@
-from nodes import GeoGraph, GeoNode
+from nodes import GeoGraph, GeoNode, EntityNode
 from generator import Block
 import random
 
@@ -26,7 +26,7 @@ class Area(object):
 		possible_points = set(self.terrain.data).difference(set(self.features.data))
 		for point in possible_points:
 			if random.randrange(0,100) == 0:
-				self.entities[point] = GeoNode(point)
+				self.entities[point] = EntityNode(point)
 		print str(len(self.entities.nodes))
 		self.fov_mask = self.features.get_mask()
 	def get_nodes(self, mask):
