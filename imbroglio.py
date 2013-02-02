@@ -9,7 +9,6 @@ class Game(object):
 		self.clock = pygame.time.Clock()
 		self.session = Session()
 		self.stack = GUIStack(self)
-		self.turn_queue.set_entities(self.session.world[0].entities.nodes)
 	def tick(self, input_events):
 		self.stack(input_events)
 		self.turn_queue.apply()

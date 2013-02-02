@@ -20,10 +20,8 @@ class TurnQueue(object):
 		self.global_time = 0
 	def __iter__(self):
 		return iter(self.order)
-	def set_entities(self, entities):
-		self.order = list(entities)
-		self.sort()
 	def sort(self):
+		self.order = list(self.owner.session.world[0].entities.nodes)
 		random.shuffle(self.order)
 		self.order.sort(key=lambda entity: entity.time, reverse = True)
 		if self.order[0].time < 0:
@@ -34,10 +32,11 @@ class TurnQueue(object):
 		for entity in self.order:
 			entity.time += time
 	def apply(self):
+		if self.order == []: self.sort() 
 		while self.order[0] != self.owner.stack.focus:
 			EntityTurn(self.order[0])
 			self.owner.event_queue.apply()
-			self.sort()
+
 
 
 event_queue = EventQueue()
@@ -65,8 +64,7 @@ class SpendTime(Event):
 	def apply(self, game):
 		entity, time = self.args[0], self.args[1]
 		entity.time += -time
-		if entity == game.stack.focus:
-			game.turn_queue.sort()
+		game.turn_queue.sort()
 
 
 class EntityTurn(Event):

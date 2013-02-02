@@ -71,7 +71,8 @@ class Cell(Widget):
 		self.rect = pygame.Rect(self.pos, (width, height))
 		self.image = get_surface(self.rect.size, (30,30,30))
 		if self.node != None:
-			self.image.blit(load_image('potion.bmp', -1),(0,0))
+			item = self.owner.images['potion']
+			self.image.blit(item, (0,0))
 
 		 		
 

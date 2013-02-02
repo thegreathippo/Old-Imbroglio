@@ -68,3 +68,5 @@ def get_step(xy1, xy2, step = 4):
 		return x, y
 	n_vec = int(round(x / length)), int(round(y / length))
 	return n_vec[0] * step, n_vec[1] * step
+
+

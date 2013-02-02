@@ -12,6 +12,7 @@ class GUIStack(object):
 		self.display.fill((0,0,0))
 		self.cell = self.rect.size[0] / 20
 		self.cell_size = self.cell, self.cell
+		self.init_images()		
  		pygame.display.flip()
 		self.stack = []
 		self.stack.append(GameMap(self, area = self.owner.session.world[0], bcolor = (0,0,0), focus = self.owner.session.player))
@@ -65,9 +66,18 @@ class GUIStack(object):
 		self.display.fill((0,0,0))
 		self.cell = self.rect.size[0] / 20
 		self.cell_size = self.cell, self.cell
+		self.init_images()		
 		pygame.display.flip()
 		for gui in self.stack:
 			gui.init()
+		self.refresh()
+	def init_images(self):
+		self.images = {
+			'floor' : pygame.transform.scale(load_image('floor.bmp'), self.cell_size),
+			'wall' : pygame.transform.scale(load_image('wall.bmp'), self.cell_size),
+			'hero' : pygame.transform.scale(load_image('hero.bmp', -1), self.cell_size),
+			'potion' : pygame.transform.scale(load_image('potion.bmp', -1), self.cell_size)
+				}
 	def refresh(self):
 		for gui in self.stack:
 			gui.refresh()

@@ -16,7 +16,8 @@ class GameMap(Widget):
 		self.camera = (self.focus.x - 9) * self.parent.cell, (self.focus.y - 9) * self.parent.cell
 		self.focus.set_fov(self.area.fov_mask)
 		self.fov = self.focus.fov.copy()
-		self.refresh(self.build_view())
+		self.build_view()
+		self.refresh()
 	def build_view(self):
 		rects = []
 		old_terrain = set(self.terrain)
@@ -76,8 +77,6 @@ class GameMap(Widget):
 			xy = child.rect.left - self.camera[0], child.rect.top - self.camera[1]
 			self.image.blit(child.image, xy)
 		screen.blit(self.image, self.rect.topleft)	
-	def key_press(self, key):
-		self.commands.append(key)
 	def apply_command(self):
 		if self.commands != []:
 			if self.commands[0] == 1:
@@ -87,8 +86,13 @@ class GameMap(Widget):
 			if self.commands[0] == 3:
 				self.handler.move_entity(self.focus,(-1,0))
 			if self.commands[0] == 4:
-				self.handler.move_entity(self.focus,(1,0))		
+				self.handler.move_entity(self.focus,(1,0))
+			if self.commands[0] == 9:
+				self.parent.init((400,400))
+				return
 			self.commands.pop(0)
+	def key_press(self, key):
+		self.commands.append(key)
 	def cursor_lclick(self, cursor):
 		if cursor.node != None:
 			for sprite in self.terrain.values():
@@ -106,15 +110,20 @@ class GameMap(Widget):
 			return
 		if focus.fov.points != self.fov.points:
 			self.fov = focus.fov.copy()
-			self.build_view()
-			refresh = True
+			dirty_rects = self.build_view()
 		for sprite in self.entities.values():
+			if sprite.moving: refresh = True
 			if sprite.follow_path() == True: refresh = True
 		if self.camera != camera:
 			step = get_step(camera, self.camera, self.parent.cell / 3)
 			self.camera = self.camera[0] + step[0], self.camera[1] + step[1]
+			refresh = True
 		if refresh: self.refresh()
-		if self.entities[self.focus].moving == False: self.apply_command()
+		if self.parent.owner.turn_queue.order != []:
+			while self.parent.owner.turn_queue.order[0] == self.focus and self.commands != []:
+				self.apply_command()
+
+
 
 
 
@@ -122,20 +131,20 @@ class GameMap(Widget):
 class Terrain(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
-		self.image = pygame.transform.scale(load_image('floor.bmp'),self.rect.size)
+		self.image = self.parent.parent.images['floor']
 	def translate(self, pos):
 		return pos[0] + self.parent.camera[0], pos[1] + self.parent.camera[1]
 
 class Feature(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
-		self.image = pygame.transform.scale(load_image('wall.bmp'),self.rect.size)
+		self.image = self.parent.parent.images['wall']
 class Entity(Widget):
 	def init(self):
 		self.path = []
 		self.moving = False
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
-		self.image = pygame.transform.scale(load_image('hero.bmp', -1),self.rect.size)
+		self.image = self.parent.parent.images['hero']
 	def add_to_path(self, pos):
 		xy = pos[0] * self.parent.parent.cell, pos[1] * self.parent.parent.cell
 		self.path.append(xy)
