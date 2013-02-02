@@ -13,9 +13,9 @@ class World(object):
 
 class Area(object):
 	def __init__(self):
-		self.terrain = GeoGraph()
-		self.features = GeoGraph()
-		self.entities = GeoGraph()
+		self.terrain = GeoGraph(self)
+		self.features = GeoGraph(self)
+		self.entities = GeoGraph(self)
 		self.constructor = Block((100,100))
 		self.constructor.build()
 		for zone in self.constructor.zones:

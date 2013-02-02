@@ -52,8 +52,9 @@ class EntityNode(GeoNode):
 		self.inventory = RectGraph((5,5))
 
 class GeoGraph(object):
-	def __init__(self, nodes = None):
+	def __init__(self, owner, nodes = None):
 		if nodes is None: nodes = set()
+		self.owner = owner
 		self.nodes = set(nodes)
 		self.data = {}
 		for node in self.nodes:
@@ -73,7 +74,8 @@ class GeoGraph(object):
 			self.data[pos] = self.data.pop(node.pos)
 			node.pos = pos
 		else:
-			self.nodes.add(node)
+			node.owner = self
+			self.nodes.add(node)			
 			self.data[pos] = node
 			node.pos = pos
 	def get_mask(self):
