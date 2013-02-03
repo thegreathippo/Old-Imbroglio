@@ -112,10 +112,7 @@ class GameMap(Widget):
 			step = get_step(camera, self.camera, self.parent.cell / 3)
 			self.camera = self.camera[0] + step[0], self.camera[1] + step[1]
 			refresh = True
-		if self.parent.owner.turn_queue.order != []:
-			while self.parent.owner.turn_queue.order[0] == self.focus and self.commands != []:
-				refresh = True
-				self.apply_command()
+
 		if refresh: self.refresh()
 
 
