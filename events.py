@@ -58,11 +58,6 @@ class Event(object):
 		self.owner.game_events.append(self)
 		self.args = args
 
-class CalculateFov(Event):
-	def apply(self, game):
-		obj = self.args[0]
-		obj.set_fov(game.session.world[0].fov_mask)
-
 class SpendTime(Event):
 	def apply(self, game):
 		entity, time = self.args[0], self.args[1]
@@ -87,7 +82,6 @@ class MoveEntity(Event):
 		if pos in game.session.world[0].entities:
 			return
 		game.session.world[0].entities[pos] = entity 
-		CalculateFov(entity)
 		if entity in game.stack[0].entities:
 			game.stack[0].entities[entity].add_to_path(pos)
 		if game.stack.focus == entity:

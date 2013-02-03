@@ -30,6 +30,10 @@ class GeoNode(Node):
 			return points.add((x,y))
 		fov(self.x, self.y, max_radius, visit)
 		self.fov = Mask(points)
+	def update(self):
+		if hasattr(self, 'owner'):
+			if hasattr(self.owner.owner, 'fov_mask'):
+				self.set_fov(self.owner.owner.fov_mask)
 	def get_pos(self):
 		return self._pos
 	def get_x(self):
@@ -38,10 +42,13 @@ class GeoNode(Node):
 		return self._pos[1]
 	def __setpos(self, xy):
 		self._pos = xy
+		self.update()
 	def __setx(self, x):
 		self._pos = x, self._pos[1]
+		self.update()
 	def __sety(self, y):
 		self._pos = self._pos[0], y
+		self.update()
 	pos = property(get_pos, __setpos, None, "gets or sets the coordinate of a GeoNode")
 	x = property(get_x, __setx, None, "gets or sets the x value of a GeoNode")
 	y = property(get_y, __sety, None, "gets or sets the y value of a GeoNode")
