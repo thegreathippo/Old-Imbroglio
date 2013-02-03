@@ -38,7 +38,7 @@ class TurnQueue(object):
 				EntityTurn(self.order[0])
 				self.owner.event_queue.apply()
 		elif self.owner.stack[0].commands != []:
-			while self.order[0] == self.owner.stack[0].focus:
+			while self.order[0] == self.owner.stack[0].focus and self.owner.stack[0].commands != []:
 				self.owner.stack[0].apply_command()
 				self.owner.event_queue.apply()
 
