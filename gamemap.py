@@ -91,12 +91,9 @@ class GameMap(Widget):
 	def key_press(self, key):
 		self.commands.append(key)
 	def cursor_lclick(self, cursor):
-		if cursor.node != None:
-			for sprite in self.terrain.values():
-				if sprite.contains_point(cursor.rect.center):
-					self.handler.throw_item(self.focus, cursor.node, sprite.owner)
-					cursor['node'] = None
-					cursor.reset()
+		for sprite in self.terrain.values():
+			if sprite.contains_point(cursor.rect.center):
+				print str(sprite.owner)
 	def tick(self, focus):
 		camera = (self.focus.x - 9) * self.parent.cell, (self.focus.y - 9) * self.parent.cell
 		refresh = False

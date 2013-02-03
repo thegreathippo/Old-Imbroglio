@@ -87,19 +87,13 @@ class GameMap(Widget):
 				self.handler.move_entity(self.focus,(-1,0))
 			if self.commands[0] == 4:
 				self.handler.move_entity(self.focus,(1,0))
-			if self.commands[0] == 9:
-				self.parent.init((400,400))
-				return
 			self.commands.pop(0)
 	def key_press(self, key):
 		self.commands.append(key)
 	def cursor_lclick(self, cursor):
-		if cursor.node != None:
-			for sprite in self.terrain.values():
-				if sprite.contains_point(cursor.rect.center):
-					self.handler.throw_item(self.focus, cursor.node, sprite.owner)
-					cursor['node'] = None
-					cursor.reset()
+		for sprite in self.terrain.values():
+			if sprite.contains_point(cursor.rect.center):
+				print str(sprite.owner)
 	def tick(self, focus):
 		camera = (self.focus.x - 9) * self.parent.cell, (self.focus.y - 9) * self.parent.cell
 		refresh = False
@@ -119,10 +113,6 @@ class GameMap(Widget):
 			self.camera = self.camera[0] + step[0], self.camera[1] + step[1]
 			refresh = True
 		if refresh: self.refresh()
-		if self.parent.owner.turn_queue.order != []:
-			while self.parent.owner.turn_queue.order[0] == self.focus and self.commands != []:
-				self.apply_command()
-
 
 
 

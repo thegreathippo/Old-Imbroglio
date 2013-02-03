@@ -18,7 +18,6 @@ class GUIStack(object):
 		self.stack.append(GameMap(self, area = self.owner.session.world[0], bcolor = (0,0,0), focus = self.owner.session.player))
 		self.stack.append(Cursor(self, node = None))
 		self.focus = self.owner.session.player
-		self.add(Inventory(self, bcolor = (75,75,40), pos = (14,5), size = (5,5)))
 #		self.add(Menu(self, bcolor = (75,75,40), pos = (10,5), size = (10,10),\
 #				choices = ['NEW GAME', 'LOAD GAME', 'OPTIONS'], \
 #				title = 'IMBROGLIO', commands = ['new_game', 'load_game', 'options'], \
@@ -105,4 +104,10 @@ class GUIStack(object):
 		pygame.display.update(self.dirty_rects)
 	def tick(self):
 		self.draw()
-		self.dirty_rects = []				
+		self.dirty_rects = []
+
+class HUD(object):
+	def __init__(self, owner):
+		self.owner = owner
+		self.owner.stack.add(Inventory(self.owner.stack, bcolor = (75,75,40), pos = (14,5), size = (5,5)))
+

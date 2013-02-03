@@ -32,10 +32,15 @@ class TurnQueue(object):
 		for entity in self.order:
 			entity.time += time
 	def apply(self):
-		if self.order == []: self.sort() 
-		while self.order[0] != self.owner.stack.focus:
-			EntityTurn(self.order[0])
-			self.owner.event_queue.apply()
+		if self.order == []: self.sort()
+		if self.order[0] != self.owner.stack.focus:
+			while self.order[0] != self.owner.stack.focus:
+				EntityTurn(self.order[0])
+				self.owner.event_queue.apply()
+		elif self.owner.stack[0].commands != []:
+			while self.order[0] == self.owner.stack[0].focus:
+				self.owner.stack[0].apply_command()
+				self.owner.event_queue.apply()
 
 
 
@@ -45,9 +50,7 @@ turn_queue = TurnQueue()
 class EventHandler(object):
 	def move_entity(self, entity, rel):
 		MoveEntity(entity, rel)
-	def throw_item(self, thrower, item, terrain):
-		print str(thrower) + " threw a " + str(item) + " at " + str(terrain) + "!"
-	
+
 
 class Event(object):
 	def __init__(self, *args):

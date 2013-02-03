@@ -1,6 +1,6 @@
 import pygame, events
 from pygame.locals import *
-from stack import GUIStack
+from stack import GUIStack, HUD
 from session import Session
 
 class Game(object):
@@ -9,6 +9,7 @@ class Game(object):
 		self.clock = pygame.time.Clock()
 		self.session = Session()
 		self.stack = GUIStack(self)
+		self.hud = HUD(self)
 	def tick(self, input_events):
 		self.stack(input_events)
 		self.turn_queue.apply()
