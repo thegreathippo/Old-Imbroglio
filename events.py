@@ -77,6 +77,8 @@ class MoveEntity(Event):
 		pos = entity.x + rel[0], entity.y + rel[1]
 		if pos not in game.session.world[0].terrain:
 			return
+		if game.session.world[0].terrain[pos]['chasm']:
+			return
 		if pos in game.session.world[0].features:
 			return
 		if pos in game.session.world[0].entities:

@@ -5,7 +5,8 @@ import random
 class Session(object):
 	def __init__(self):
 		self.world = World()
-		points = self.world[0].constructor.starter_zone.floor.difference(self.world[0].constructor.starter_zone.wall)
+		points = set([node.pos for node in self.world[0].terrain.nodes if node['chasm'] == False])
+		points.difference_update(set(self.world[0].features.data))
 		self.player = EntityNode((random.choice(list(points))))	
 		self.world[0].entities[self.player.pos] = self.player
 

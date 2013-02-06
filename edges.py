@@ -205,14 +205,14 @@ class DefinedZone(Zone):
 		self.structures = set()
 		self.path = set()
 		self.wall = set()
-		self.kind = None
 		for region in self.regions:
 			region.zone = self
 			region.color = self.color
 			self.neighborhood.update(region.fill())
 		self.area = self.neighborhood
 		self.neighborhood = self.neighborhood.difference(get_outline(self.neighborhood))
-		self.floor = set()	
+		self.floor = set()
+		self.chasm = set()
 
 class StructuredZone(DefinedZone):
 	def prep_structures(self):
@@ -331,7 +331,7 @@ class ChasmZone(OpenZone):
 		self.floor = build_cave(self.neighborhood, .70).intersection(self.neighborhood)
 		for region in self.regions:
 			self.floor.add(region.center.xy)
-			self.connect_all_points_in_region(region)		
+			self.connect_all_points_in_region(region)
 	def draw_path(self):
 		unexplored = [random.choice(list(self.regions))]
 		visited = set()
@@ -356,7 +356,9 @@ class ChasmZone(OpenZone):
 				self.path.update(build_circle(region.center.xy, 5))
 		self.path = self.path.intersection(self.area)
 		self.floor.update(self.path)
-		self.wall.update(get_trace(self.floor).intersection(self.area))			
+		self.wall.update(get_trace(self.floor).intersection(self.area))
+		self.chasm = self.floor.copy()
+		self.floor = self.path.copy()
 
 class LobbyZone(StructuredZone):
 	def construct(self):

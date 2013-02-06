@@ -1,4 +1,4 @@
-from nodes import GeoGraph, GeoNode
+from nodes import GeoGraph, GeoNode, EntityNode
 from generator import Block
 import random
 
@@ -13,20 +13,24 @@ class World(object):
 
 class Area(object):
 	def __init__(self):
-		self.terrain = GeoGraph()
-		self.features = GeoGraph()
-		self.entities = GeoGraph()
+		self.terrain = GeoGraph(self)
+		self.features = GeoGraph(self)
+		self.entities = GeoGraph(self)
 		self.constructor = Block((100,100))
 		self.constructor.build()
+		chasm = set()
 		for zone in self.constructor.zones:
+			for point in zone.chasm:
+				self.terrain[point] = GeoNode(point, {'chasm' : True})
+				chasm.add(point)
 			for point in zone.floor:
-				self.terrain[point] = GeoNode(point)
+				self.terrain[point] = GeoNode(point, {'chasm' : False})
 			for point in zone.wall:
 				self.features[point] = GeoNode(point)
-		possible_points = set(self.terrain.data).difference(set(self.features.data))
+		possible_points = set(self.terrain.data).difference(set(self.features.data)).difference(chasm)
 		for point in possible_points:
 			if random.randrange(0,100) == 0:
-				self.entities[point] = GeoNode(point)
+				self.entities[point] = EntityNode(point)
 		print str(len(self.entities.nodes))
 		self.fov_mask = self.features.get_mask()
 	def get_nodes(self, mask):

@@ -18,12 +18,17 @@ class Area(object):
 		self.entities = GeoGraph(self)
 		self.constructor = Block((100,100))
 		self.constructor.build()
+		chasm = set()
 		for zone in self.constructor.zones:
+			for point in zone.chasm:
+				self.terrain[point] = GeoNode(point, {'chasm' : True})
+				chasm.add(point)
+				print 'chasm'
 			for point in zone.floor:
-				self.terrain[point] = GeoNode(point)
+				self.terrain[point] = GeoNode(point, {'chasm' : False})
 			for point in zone.wall:
 				self.features[point] = GeoNode(point)
-		possible_points = set(self.terrain.data).difference(set(self.features.data))
+		possible_points = set(self.terrain.data).difference(set(self.features.data)).difference(chasm)
 		for point in possible_points:
 			if random.randrange(0,100) == 0:
 				self.entities[point] = EntityNode(point)

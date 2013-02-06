@@ -123,7 +123,10 @@ class GameMap(Widget):
 class Terrain(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
-		self.image = self.parent.parent.images['floor']
+		if self.owner['chasm']:
+			self.image = self.parent.parent.images['chasm']
+		else:
+			self.image = self.parent.parent.images['floor']
 	def translate(self, pos):
 		return pos[0] + self.parent.camera[0], pos[1] + self.parent.camera[1]
 
@@ -137,7 +140,10 @@ class Entity(Widget):
 		self.path = []
 		self.moving = False
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
-		self.image = self.parent.parent.images['hero']
+		if self.owner == self.parent.focus:		
+			self.image = self.parent.parent.images['hero']
+		else:
+			self.image = self.parent.parent.images['monster']
 	def float_text(self, txt, clr):
 		size = get_text_size(txt)
 		xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]

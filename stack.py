@@ -75,7 +75,9 @@ class GUIStack(object):
 			'floor' : pygame.transform.scale(load_image('floor.bmp'), self.cell_size),
 			'wall' : pygame.transform.scale(load_image('wall.bmp'), self.cell_size),
 			'hero' : pygame.transform.scale(load_image('hero.bmp', -1), self.cell_size),
-			'potion' : pygame.transform.scale(load_image('potion.bmp', -1), self.cell_size)
+			'monster' : pygame.transform.scale(load_image('monster.bmp', -1), self.cell_size),
+			'potion' : pygame.transform.scale(load_image('potion.bmp', -1), self.cell_size),
+			'chasm' : pygame.transform.scale(load_image('chasm.bmp'), self.cell_size)
 				}
 	def refresh(self):
 		for gui in self.stack:
