@@ -80,14 +80,62 @@ class MoveEntity(Event):
 		if pos in game.session.world[0].features:
 			return
 		if pos in game.session.world[0].entities:
+			BumpEntity(entity, game.session.world[0].entities[pos])
 			return
 		game.session.world[0].entities[pos] = entity 
 		if entity in game.stack[0].entities:
 			game.stack[0].entities[entity].add_to_path(pos)
 		if game.stack.focus == entity:
-			SpendTime(entity, 5)
-		else:
 			SpendTime(entity, 4)
+		else:
+			SpendTime(entity, 5)
+
+class BumpEntity(Event):
+	def apply(self, game):
+		bumper, target = self.args[0], self.args[1]
+		MeleeAttack(bumper, target)
+
+class MeleeAttack(Event):
+	def apply(self, game):
+		attacker, target = self.args[0], self.args[1]
+		attack_roll = roll(attacker.melee_to_hit)
+		if attack_roll == True:
+			MeleeDamage(attacker, target)
+		elif attack_roll == False:
+			PrintText('MISS', target, (250,250,250))
+		elif attack_roll >= target.reflex:	
+			MeleeDamage(attacker, target)
+		else: 
+			PrintText('MISS', target, (250,250,250))
+		SpendTime(attacker, 5)
+
+class MeleeDamage(Event):
+	def apply(self, game):
+		attacker, target = self.args[0], self.args[1]
+		damage_roll = roll(attacker.melee_damage)
+		if damage_roll == True:
+			target.damage += 20
+			PrintText('CRITICAL!', target, (250,0,0))
+		elif damage_roll == False:
+			PrintText(0, target, (250,250,250))			
+		elif damage_roll > target.defense:
+			target.damage += damage_roll - target.defense
+			PrintText(damage_roll - target.defense, target, (250,0,0))
+		else:
+			PrintText(0, target, (250,250,250))
+
+
+class PrintText(Event):
+	def apply(self, game):
+		text, entity, color = str(self.args[0]), self.args[1], self.args[2]
+		if entity in game.stack[0].entities:
+			game.stack[0].entities[entity].print_text(text, color)		
+
+def roll(modifier = 0):
+	result = random.randrange(1, 21)
+	if result == 20: return True
+	if result == 1: return False
+	return result + modifier
 
 
 

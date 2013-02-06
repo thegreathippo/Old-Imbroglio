@@ -74,5 +74,6 @@ class Cell(Widget):
 			item = self.owner.images['potion']
 			self.image.blit(item, (0,0))
 
+
 		 		
 

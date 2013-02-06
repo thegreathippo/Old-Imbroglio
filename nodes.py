@@ -5,23 +5,23 @@ from fov import fov
 class Node(object):
 	def __init__(self, properties = None):
 		if properties is None: properties = {}
-		self.properties = dict(properties)
+		self.data = dict(properties)
 		self.init()
 	def __getitem__(self, key):
-		return self.properties[key]
+		return self.data[key]
 	def __setitem__(self, key, value):
-		self.properties[key] = value
+		self.data[key] = value
 	def init(self):
 		pass
 
 class GeoNode(Node):
 	def __init__(self, pos, properties = None):
 		if properties is None: properties = {}
-		self.properties = dict(properties)
+		self.data = dict(properties)
 		self._pos = pos
 		self.fov = Mask()
 		self.init()
-	def set_fov(self, mask, max_radius = 10):
+	def set_fov(self, mask, max_radius = 10): 
 		points = set()
 		def visit(x, y):
 			if (x, y) in mask:
@@ -34,29 +34,99 @@ class GeoNode(Node):
 		if hasattr(self, 'owner'):
 			if hasattr(self.owner.owner, 'fov_mask'):
 				self.set_fov(self.owner.owner.fov_mask)
-	def get_pos(self):
+	def __get_pos(self):
 		return self._pos
-	def get_x(self):
+	def __get_x(self):
 		return self._pos[0]
-	def get_y(self):
+	def __get_y(self):
 		return self._pos[1]
-	def __setpos(self, xy):
+	def __set_pos(self, xy):
 		self._pos = xy
 		self.update()
-	def __setx(self, x):
+	def __set_x(self, x):
 		self._pos = x, self._pos[1]
 		self.update()
-	def __sety(self, y):
+	def __set_y(self, y):
 		self._pos = self._pos[0], y
 		self.update()
-	pos = property(get_pos, __setpos, None, "gets or sets the coordinate of a GeoNode")
-	x = property(get_x, __setx, None, "gets or sets the x value of a GeoNode")
-	y = property(get_y, __sety, None, "gets or sets the y value of a GeoNode")
+	pos = property(__get_pos, __set_pos, None, "gets or sets the coordinate of a GeoNode")
+	x = property(__get_x, __set_x, None, "gets or sets the x value of a GeoNode")
+	y = property(__get_y, __set_y, None, "gets or sets the y value of a GeoNode")
 
 class EntityNode(GeoNode):
 	def init(self):
 		self.time = 0
 		self.inventory = RectGraph((5,5))
+		self.strength_modifier, self.dexterity_modifier, self.constitution_modifier = 0, 0, 0
+		self.intelligence_modifier, self.wisdom_modifier, self.charisma_modifier = 0, 0, 0
+		self.strength = 10
+		self.dexterity = 10
+		self.constitution = 10
+		self.intelligence = 10
+		self.wisdom = 10
+		self.charisma = 10
+		self.damage = 0
+	def calculate_modifier(self, value):
+		return (int(value) / 2) - 5
+	def update_stats(self):
+		if self.strength_modifier > self.constitution_modifier: fortitude_mod = self.strength_modifier
+		else: fortitude_mod = self.constitution_modifier
+		if self.intelligence_modifier > self.dexterity_modifier: reflex_mod = self.intelligence_modifier
+		else: reflex_mod = self.dexterity_modifier
+		if self.charisma_modifier > self.wisdom_modifier: will_modifier = self.charisma_modifier
+		else: will_mod = self.wisdom_modifier
+		self.fortitude = 10 + fortitude_mod
+		self.reflex = 10 + reflex_mod
+		self.will = 10 + will_mod
+		self.defense = self.fortitude
+		self.melee_to_hit = self.strength_modifier
+		self.range_to_hit = self.dexterity_modifier
+		self.melee_damage = 0
+		self.range_damage = 0
+	def __get_str(self, value):
+		return self._str
+	def __set_str(self, value):
+		self._str = value
+		self.str_mod = self.calculate_modifier(value)
+		self.update_stats()
+	def __get_dex(self, value):
+		return self._dex
+	def __set_dex(self, value):
+		self._dex = value
+		self.dex_mod = self.calculate_modifier(value)
+		self.update_stats()		
+	def __get_con(self, value):
+		return self._con
+	def __set_con(self, value):
+		self._con = value
+		self.con_mod = self.calculate_modifier(value)
+		self.update_stats()
+	def __get_int(self, value):
+		return self._int
+	def __set_int(self, value):
+		self._int = value
+		self.int_mod = self.calculate_modifier(value)
+		self.update_stats()
+	def __get_wis(self, value):
+		return self._wis
+	def __set_wis(self, value):
+		self._wis = value
+		self.wis_mod = self.calculate_modifier(value)
+		self.update_stats()
+	def __get_cha(self, value):
+		return self._cha
+	def __set_cha(self, value):
+		self._cha = value
+		self.cha_mod = self.calculate_modifier(value)
+		self.update_stats()	
+
+	strength = property(__get_str, __set_str, None, "gets or sets strength of EntityNode")	
+	dexterity = property(__get_dex, __set_dex, None, "gets or sets dexterity of EntityNode")
+	constitution = property(__get_con, __set_con, None, "gets or sets constitution of EntityNode")
+	intelligence = property(__get_int, __set_int, None, "gets or sets intelligence of EntityNode")
+	wisdom = property(__get_wis, __set_wis, None, "gets or sets wisdom of EntityNode")
+	charisma = property(__get_cha, __set_cha, None, "gets or sets charisma of EntityNode")	
+
 
 class GeoGraph(object):
 	def __init__(self, owner, nodes = None):
@@ -154,4 +224,6 @@ class Mask(object):
 		return point in self.points
 	def copy(self):
 		return Mask(self.points)
+
+
 

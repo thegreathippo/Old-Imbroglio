@@ -102,6 +102,8 @@ class GameMap(Widget):
 			self.focus = focus
 			self.init()
 			return
+		for child in self.children.copy():
+			if child.tick(focus) == True: refresh = True
 		if focus.fov.points != self.fov.points:
 			self.fov = focus.fov.copy()
 			dirty_rects = self.build_view()
@@ -112,7 +114,6 @@ class GameMap(Widget):
 			step = get_step(camera, self.camera, self.parent.cell / 3)
 			self.camera = self.camera[0] + step[0], self.camera[1] + step[1]
 			refresh = True
-
 		if refresh: self.refresh()
 
 
@@ -130,12 +131,18 @@ class Feature(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
 		self.image = self.parent.parent.images['wall']
+
 class Entity(Widget):
 	def init(self):
 		self.path = []
 		self.moving = False
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
 		self.image = self.parent.parent.images['hero']
+	def print_text(self, txt, clr):
+		size = get_text_size(txt)
+		xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]
+		sprite_text = SpriteText(self.parent, pos = xy, text = txt, color = clr, timer = 0)
+		self.parent.children.add(sprite_text)
 	def add_to_path(self, pos):
 		xy = pos[0] * self.parent.parent.cell, pos[1] * self.parent.parent.cell
 		self.path.append(xy)
@@ -148,7 +155,23 @@ class Entity(Widget):
 			self.rect.topleft = self.rect.left + step[0], self.rect.top + step[1]
 			if self.rect.topleft == self.path[0]:
 				self.path.pop(0)
-			return True	
+			return True
+
+class SpriteText(Widget):
+	def init(self):
+		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
+		self.image = get_text(self.text, self.color)
+	def translate(self, pos):
+		return pos[0] + self.parent.camera[0], pos[1] + self.parent.camera[1]
+	def tick(self, focus):
+		self.timer += 1
+		new_color = self.color[0] - self.timer, self.color[1], self.color[2]
+		new_pos = self.pos[0], self.pos[1] - (self.parent.parent.cell / 20)
+		self.overwrite(pos = new_pos, color = new_color)
+		if self.timer > 20:
+			self.parent.children.remove(self)
+			return True
+		return True		
 
 
 		
