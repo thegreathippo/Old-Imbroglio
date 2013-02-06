@@ -43,6 +43,21 @@ class Cursor(GUI):
 	def tick(self, focus):
 		self.refresh()
 
+class CharSheet(GUI):
+	def init(self):
+		self.children = set()
+		pos = self.pos[0] * self.parent.cell, self.pos[1] * self.parent.cell
+		size = self.size[0] * self.parent.cell, self.size[1] * self.parent.cell
+		self.rect = pygame.Rect(pos, size)
+		self.image = get_surface(self.rect.size, self.bcolor)
+		self.children.add(Label(self, pos = (0, self.parent.cell / 2), text = 'WOUNDS:', color = self.color))
+		self.wounds = Label(self, pos = (0, self.parent.cell), text = str(self.parent.focus.damage), color = self.color)
+		self.children.add(self.wounds)
+	def refresh(self):
+		self.wounds.update(text = str(self.parent.focus.damage))
+		self.draw(self.parent.display)
+		self.parent.dirty_rects.append(self.rect)
+
 class Status(GUI):
 	def init(self):
 		self.children = set()

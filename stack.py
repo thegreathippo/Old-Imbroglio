@@ -111,7 +111,8 @@ class GUIStack(object):
 class HUD(object):
 	def __init__(self, owner):
 		self.owner = owner
-		self.owner.stack.add(Status(self.owner.stack, bcolor = (75,75,40), pos = (15,1), size = (4, 3)))
-		self.owner.stack.add(TextScroll(self.owner.stack, bcolor = (75,75,40), pos = (2,17), size = (16, 2)))
+#		self.owner.stack.add(CharSheet(self.owner.stack, bcolor = (75,75,40), pos = (1,1), size = (18,18)))
+#		self.owner.stack.add(Status(self.owner.stack, bcolor = (75,75,40), pos = (15,1), size = (4, 3)))
+#		self.owner.stack.add(TextScroll(self.owner.stack, bcolor = (75,75,40), pos = (2,17), size = (16, 2)))
 #		self.owner.stack.add(Inventory(self.owner.stack, bcolor = (75,75,40), pos = (14,5), size = (5,5)))
 

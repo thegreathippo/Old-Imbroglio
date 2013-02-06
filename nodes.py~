@@ -67,22 +67,21 @@ class EntityNode(GeoNode):
 		self.charisma = 10
 		self.damage = 0
 	def die(self):
-		print 'die!'
 		self.owner.nodes.remove(self)
 		del self.owner[self.pos]
 	def calculate_modifier(self, value):
 		return (int(value) / 2) - 5
 	def update_stats(self):
-		if self.strength_modifier > self.constitution_modifier: fortitude_mod = self.strength_modifier
-		else: fortitude_mod = self.constitution_modifier
+		if self.strength_modifier > self.constitution_modifier: vigor_mod = self.strength_modifier
+		else: vigor_mod = self.constitution_modifier
 		if self.intelligence_modifier > self.dexterity_modifier: reflex_mod = self.intelligence_modifier
 		else: reflex_mod = self.dexterity_modifier
 		if self.charisma_modifier > self.wisdom_modifier: will_modifier = self.charisma_modifier
 		else: will_mod = self.wisdom_modifier
-		self.fortitude = 10 + fortitude_mod
+		self.vigor = 10 + vigor_mod
 		self.reflex = 10 + reflex_mod
 		self.will = 10 + will_mod
-		self.defense = self.fortitude
+		self.fortitude = self.vigor
 		self.melee_to_hit = self.strength_modifier
 		self.range_to_hit = self.dexterity_modifier
 		self.melee_damage = 0

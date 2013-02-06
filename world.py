@@ -23,7 +23,6 @@ class Area(object):
 			for point in zone.chasm:
 				self.terrain[point] = GeoNode(point, {'chasm' : True})
 				chasm.add(point)
-				print 'chasm'
 			for point in zone.floor:
 				self.terrain[point] = GeoNode(point, {'chasm' : False})
 			for point in zone.wall:

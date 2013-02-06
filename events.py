@@ -84,9 +84,13 @@ class MoveEntity(Event):
 		if pos in game.session.world[0].entities:
 			BumpEntity(entity, game.session.world[0].entities[pos])
 			return
-		game.session.world[0].entities[pos] = entity 
+		if pos in game.stack.focus.fov and entity not in game.stack[0].entities:
+			game.stack[0].add_entity_sprite(entity)
+		game.session.world[0].entities[pos] = entity
 		if entity in game.stack[0].entities:
 			game.stack[0].entities[entity].add_to_path(pos)
+			if pos not in game.stack.focus.fov:
+				game.stack[0].entities[entity].add_to_path(False)
 		if game.stack.focus == entity:
 			SpendTime(entity, 4)
 		else:
@@ -132,7 +136,7 @@ class MeleeDamage(Event):
 class CheckForDeath(Event):
 	def apply(self, game):
 		entity = self.args[0]
-		if entity.damage >= entity.constitution:
+		if entity.damage >= entity.fortitude:
 			FloatText('DEAD!', entity, (250,250,0))
 			EntityDeath(entity)
 
