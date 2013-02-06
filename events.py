@@ -102,11 +102,11 @@ class MeleeAttack(Event):
 		if attack_roll == True:
 			MeleeDamage(attacker, target)
 		elif attack_roll == False:
-			PrintText('MISS', target, (250,250,250))
+			FloatText('MISS', target, (250,250,250))
 		elif attack_roll >= target.reflex:	
 			MeleeDamage(attacker, target)
 		else: 
-			PrintText('MISS', target, (250,250,250))
+			FloatText('MISS', target, (250,250,250))
 		SpendTime(attacker, 5)
 
 class MeleeDamage(Event):
@@ -115,21 +115,38 @@ class MeleeDamage(Event):
 		damage_roll = roll(attacker.melee_damage)
 		if damage_roll == True:
 			target.damage += 20
-			PrintText('CRITICAL!', target, (250,0,0))
+			FloatText('CRITICAL!', target, (250,0,0))
 		elif damage_roll == False:
-			PrintText(0, target, (250,250,250))			
+			FloatText(0, target, (250,250,250))			
 		elif damage_roll > target.defense:
-			target.damage += damage_roll - target.defense
-			PrintText(damage_roll - target.defense, target, (250,0,0))
+			damage = damage_roll - target.defense
+			target.damage += damage
+			FloatText(-damage, target, (250,0,0))
 		else:
-			PrintText(0, target, (250,250,250))
+			FloatText(0, target, (250,250,250))
+		if target != game.stack.focus:
+			CheckForDeath(target)
 
+class CheckForDeath(Event):
+	def apply(self, game):
+		entity = self.args[0]
+		if entity.damage >= entity.constitution:
+			FloatText('DEAD!', entity, (250,250,0))
+			EntityDeath(entity)
 
-class PrintText(Event):
+class EntityDeath(Event):
+	def apply(self, game):
+		entity = self.args[0]
+		if entity in game.stack[0].entities:
+			del game.stack[0].entities[entity]
+		entity.die()
+		game.turn_queue.sort()		
+
+class FloatText(Event):
 	def apply(self, game):
 		text, entity, color = str(self.args[0]), self.args[1], self.args[2]
 		if entity in game.stack[0].entities:
-			game.stack[0].entities[entity].print_text(text, color)		
+			game.stack[0].entities[entity].float_text(text, color)		
 
 def roll(modifier = 0):
 	result = random.randrange(1, 21)

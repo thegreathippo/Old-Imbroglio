@@ -5,7 +5,7 @@ from widget import *
 class GameMap(Widget):
 	def init(self):
 		self.commands = []
-		self.children = set()
+		self.children = []
 		self.terrain = {}
 		self.features = {}
 		self.entities = {}
@@ -102,7 +102,7 @@ class GameMap(Widget):
 			self.focus = focus
 			self.init()
 			return
-		for child in self.children.copy():
+		for child in list(self.children):
 			if child.tick(focus) == True: refresh = True
 		if focus.fov.points != self.fov.points:
 			self.fov = focus.fov.copy()
@@ -138,11 +138,11 @@ class Entity(Widget):
 		self.moving = False
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
 		self.image = self.parent.parent.images['hero']
-	def print_text(self, txt, clr):
+	def float_text(self, txt, clr):
 		size = get_text_size(txt)
 		xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]
-		sprite_text = SpriteText(self.parent, pos = xy, text = txt, color = clr, timer = 0)
-		self.parent.children.add(sprite_text)
+		float_text = FloatText(self.parent, pos = xy, text = txt, color = clr, timer = 0)
+		self.parent.children.append(float_text)
 	def add_to_path(self, pos):
 		xy = pos[0] * self.parent.parent.cell, pos[1] * self.parent.parent.cell
 		self.path.append(xy)
@@ -157,7 +157,7 @@ class Entity(Widget):
 				self.path.pop(0)
 			return True
 
-class SpriteText(Widget):
+class FloatText(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
 		self.image = get_text(self.text, self.color)

@@ -65,6 +65,11 @@ class EntityNode(GeoNode):
 		self.intelligence = 10
 		self.wisdom = 10
 		self.charisma = 10
+		self.damage = 0
+	def die(self):
+		print 'die!'
+		self.owner.nodes.remove(self)
+		del self.owner[self.pos]
 	def calculate_modifier(self, value):
 		return (int(value) / 2) - 5
 	def update_stats(self):
@@ -82,37 +87,37 @@ class EntityNode(GeoNode):
 		self.range_to_hit = self.dexterity_modifier
 		self.melee_damage = 0
 		self.range_damage = 0
-	def __get_str(self, value):
+	def __get_str(self):
 		return self._str
 	def __set_str(self, value):
 		self._str = value
 		self.str_mod = self.calculate_modifier(value)
 		self.update_stats()
-	def __get_dex(self, value):
+	def __get_dex(self):
 		return self._dex
 	def __set_dex(self, value):
 		self._dex = value
 		self.dex_mod = self.calculate_modifier(value)
 		self.update_stats()		
-	def __get_con(self, value):
+	def __get_con(self):
 		return self._con
 	def __set_con(self, value):
 		self._con = value
 		self.con_mod = self.calculate_modifier(value)
 		self.update_stats()
-	def __get_int(self, value):
+	def __get_int(self):
 		return self._int
 	def __set_int(self, value):
 		self._int = value
 		self.int_mod = self.calculate_modifier(value)
 		self.update_stats()
-	def __get_wis(self, value):
+	def __get_wis(self):
 		return self._wis
 	def __set_wis(self, value):
 		self._wis = value
 		self.wis_mod = self.calculate_modifier(value)
 		self.update_stats()
-	def __get_cha(self, value):
+	def __get_cha(self):
 		return self._cha
 	def __set_cha(self, value):
 		self._cha = value
