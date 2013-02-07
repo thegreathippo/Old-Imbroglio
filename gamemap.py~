@@ -89,22 +89,8 @@ class GameMap(Widget):
 		screen.blit(self.image, self.rect.topleft)	
 	def apply_command(self):
 		if self.commands != []:
-			if self.commands[0] == 1:
-				self.handler.move_entity(self.focus,(0,-1))
-			if self.commands[0] == 2:
-				self.handler.move_entity(self.focus,(0,1))
-			if self.commands[0] == 3:
-				self.handler.move_entity(self.focus,(-1,0))
-			if self.commands[0] == 4:
-				self.handler.move_entity(self.focus,(1,0))
-			if self.commands[0] == 5:
-				self.handler.move_entity(self.focus,(-1,-1))
-			if self.commands[0] == 6:
-				self.handler.move_entity(self.focus,(1,-1))
-			if self.commands[0] == 7:
-				self.handler.move_entity(self.focus,(-1,1))
-			if self.commands[0] == 8:
-				self.handler.move_entity(self.focus,(1,1))
+			if self.commands[0] > 0 and self.commands[0] < 9:
+				self.handler.move_entity(self.focus, COMMANDS[self.commands[0]])
 			self.commands.pop(0)
 	def key_press(self, key):
 		self.commands.append(key)

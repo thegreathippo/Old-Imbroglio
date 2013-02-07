@@ -14,6 +14,7 @@ MAX_MAP_SIZE = (200, 200)
 #7 : SW
 #8 : SE
 #9 : enter
+#10 : wait
 
 NORTH = ( 0,-1)
 SOUTH = ( 0, 1)
@@ -40,7 +41,8 @@ DEFAULT_KEYS = {
 	275 : 4,
 	13 : 9,
 	271 : 9,
-	32 : 9
+	32 : 9,
+	261: 10
 }
 
 COMMANDS = { 

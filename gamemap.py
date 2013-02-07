@@ -91,6 +91,8 @@ class GameMap(Widget):
 		if self.commands != []:
 			if self.commands[0] > 0 and self.commands[0] < 9:
 				self.handler.move_entity(self.focus, COMMANDS[self.commands[0]])
+			if self.commands[0] == 10:
+				self.handler.wait_entity(self.focus)
 			self.commands.pop(0)
 	def key_press(self, key):
 		self.commands.append(key)

@@ -36,7 +36,7 @@ class GeoNode(Node):
 		if hasattr(self, 'owner'):
 			if hasattr(self.owner.owner, 'fov_mask'):
 				self.set_fov(self.owner.owner.fov_mask)
-				self.brain.update()
+				self.brain.observe()
 	def __get_pos(self):
 		return self._pos
 	def __get_x(self):

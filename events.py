@@ -50,6 +50,8 @@ turn_queue = TurnQueue()
 class EventHandler(object):
 	def move_entity(self, entity, rel):
 		MoveEntity(entity, rel)
+	def wait_entity(self, entity):
+		WaitEntity(entity)
 
 
 class Event(object):
@@ -68,8 +70,18 @@ class SpendTime(Event):
 class EntityTurn(Event):
 	def apply(self, game):
 		entity, rel = self.args[0], random.choice(MOORE)
-		MoveEntity(entity, rel)
+		if entity.brain.path != []:
+			step = entity.brain.path[0]
+			new_rel = step[0] - entity.x, step[1] - entity.y
+			entity.brain.path.pop(0)
+			MoveEntity(entity, new_rel)
+		else:
+			MoveEntity(entity, rel)
 
+class WaitEntity(Event):
+	def apply(self, game):
+		entity = self.args[0]
+		SpendTime(entity, 5)
 
 class MoveEntity(Event):
 	def apply(self, game):
@@ -91,10 +103,7 @@ class MoveEntity(Event):
 			game.stack[0].entities[entity].add_to_path(pos)
 			if pos not in game.stack.focus.fov:
 				game.stack[0].entities[entity].add_to_path(False)
-		if game.stack.focus == entity:
-			SpendTime(entity, 4)
-		else:
-			SpendTime(entity, 5)
+		SpendTime(entity, 5)
 
 class BumpEntity(Event):
 	def apply(self, game):
