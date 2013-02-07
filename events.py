@@ -1,6 +1,6 @@
 import random
 
-NEUMANN = [(1,0), (-1,0), (0,1), (0,-1)]
+MOORE = [(1,0), (-1,0), (0,1), (0,-1), (1,1), (-1,1), (-1,-1), (1,-1)]
 
 class EventQueue(object):
 	def __init__(self):
@@ -67,7 +67,7 @@ class SpendTime(Event):
 
 class EntityTurn(Event):
 	def apply(self, game):
-		entity, rel = self.args[0], random.choice(NEUMANN)
+		entity, rel = self.args[0], random.choice(MOORE)
 		MoveEntity(entity, rel)
 
 

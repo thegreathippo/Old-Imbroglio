@@ -72,6 +72,7 @@ class GameMap(Widget):
 			xy = child.rect.left - self.camera[0], child.rect.top - self.camera[1]
 			if child.owner.pos in self.focus.fov:
 				self.image.blit(child.image, xy)
+			else:
 				self.image.blit(child.memory_image, xy)				
 		for child in self.features.values():
 			xy = child.rect.left - self.camera[0], child.rect.top - self.camera[1]
@@ -96,6 +97,14 @@ class GameMap(Widget):
 				self.handler.move_entity(self.focus,(-1,0))
 			if self.commands[0] == 4:
 				self.handler.move_entity(self.focus,(1,0))
+			if self.commands[0] == 5:
+				self.handler.move_entity(self.focus,(-1,-1))
+			if self.commands[0] == 6:
+				self.handler.move_entity(self.focus,(1,-1))
+			if self.commands[0] == 7:
+				self.handler.move_entity(self.focus,(-1,1))
+			if self.commands[0] == 8:
+				self.handler.move_entity(self.focus,(1,1))
 			self.commands.pop(0)
 	def key_press(self, key):
 		self.commands.append(key)
