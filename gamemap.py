@@ -29,8 +29,9 @@ class GameMap(Widget):
 			self.terrain[node] = terrain
 			rects.append(terrain.rect)
 		for node in dead_nodes:
-			rects.append(self.terrain[node].rect)
-			del self.terrain[node]
+			if node.pos not in self.focus.brain.floors:
+				rects.append(self.terrain[node].rect)
+				del self.terrain[node]
 		old_features = set(self.features)
 		new_features = self.area.features.get_nodes(self.fov)
 		new_nodes = new_features.difference(old_features)
@@ -40,8 +41,9 @@ class GameMap(Widget):
 			self.features[node] = feature
 			rects.append(feature.rect)
 		for node in dead_nodes:
-			rects.append(self.features[node].rect)
-			del self.features[node]		
+			if node.pos not in self.focus.brain.walls:
+				rects.append(self.features[node].rect)
+				del self.features[node]		
 		old_entities = set(self.entities)
 		new_entities = self.area.entities.get_nodes(self.fov)
 		new_nodes = new_entities.difference(old_entities)
@@ -68,10 +70,16 @@ class GameMap(Widget):
 		self.image.fill(self.bcolor)
 		for child in self.terrain.values():
 			xy = child.rect.left - self.camera[0], child.rect.top - self.camera[1]
-			self.image.blit(child.image, xy)
+			if child.owner.pos in self.focus.fov:
+				self.image.blit(child.image, xy)
+			else:
+				self.image.blit(child.memory_image, xy)				
 		for child in self.features.values():
 			xy = child.rect.left - self.camera[0], child.rect.top - self.camera[1]
-			self.image.blit(child.image, xy)
+			if child.owner.pos in self.focus.fov:
+				self.image.blit(child.image, xy)
+			else:
+				self.image.blit(child.memory_image, xy)
 		for child in self.entities.values():
 			xy = child.rect.left - self.camera[0], child.rect.top - self.camera[1]
 			self.image.blit(child.image, xy)
@@ -129,6 +137,7 @@ class Terrain(Widget):
 			self.image = self.parent.parent.images['chasm']
 		else:
 			self.image = self.parent.parent.images['floor']
+		self.memory_image = self.parent.parent.images['floor_memory']	
 	def translate(self, pos):
 		return pos[0] + self.parent.camera[0], pos[1] + self.parent.camera[1]
 
@@ -136,6 +145,7 @@ class Feature(Widget):
 	def init(self):
 		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
 		self.image = self.parent.parent.images['wall']
+		self.memory_image = self.parent.parent.images['wall_memory']
 
 class Entity(Widget):
 	def init(self):

@@ -1,6 +1,7 @@
 import math, pygame, random
 from fov import fov
 from sheet import Abilities, Modifiers, Defenses, Attacks
+from brain import Brain
 
 class Node(object):
 	def __init__(self, properties = None):
@@ -20,6 +21,7 @@ class GeoNode(Node):
 		self.data = dict(properties)
 		self._pos = pos
 		self.fov = Mask()
+		self.brain = Brain(self)
 		self.init()
 	def set_fov(self, mask, max_radius = 10): 
 		points = set()
@@ -34,6 +36,7 @@ class GeoNode(Node):
 		if hasattr(self, 'owner'):
 			if hasattr(self.owner.owner, 'fov_mask'):
 				self.set_fov(self.owner.owner.fov_mask)
+				self.brain.observe()
 	def __get_pos(self):
 		return self._pos
 	def __get_x(self):
