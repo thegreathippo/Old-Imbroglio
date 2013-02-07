@@ -1,6 +1,6 @@
 import math, pygame, random
 from fov import fov
-
+from sheet import Abilities, Modifiers, Defenses, Attacks
 
 class Node(object):
 	def __init__(self, properties = None):
@@ -57,78 +57,16 @@ class EntityNode(GeoNode):
 	def init(self):
 		self.time = 0
 		self.inventory = RectGraph((5,5))
-		self.strength_modifier, self.dexterity_modifier, self.constitution_modifier = 0, 0, 0
-		self.intelligence_modifier, self.wisdom_modifier, self.charisma_modifier = 0, 0, 0
-		self.strength = 10
-		self.dexterity = 10
-		self.constitution = 10
-		self.intelligence = 10
-		self.wisdom = 10
-		self.charisma = 10
+		self.ability = Abilities(self)
+		self.modifier = Modifiers(self)
+		self.defense = Defenses(self)
+		self.attack = Attacks(self)
 		self.damage = 0
 	def die(self):
 		self.owner.nodes.remove(self)
 		del self.owner[self.pos]
-	def calculate_modifier(self, value):
-		return (int(value) / 2) - 5
-	def update_stats(self):
-		if self.strength_modifier > self.constitution_modifier: fortitude_mod = self.strength_modifier
-		else: fortitude_mod = self.constitution_modifier
-		if self.intelligence_modifier > self.dexterity_modifier: reflex_mod = self.intelligence_modifier
-		else: reflex_mod = self.dexterity_modifier
-		if self.charisma_modifier > self.wisdom_modifier: will_modifier = self.charisma_modifier
-		else: will_mod = self.wisdom_modifier
-		self.fortitude = 10 + fortitude_mod
-		self.reflex = 10 + reflex_mod
-		self.will = 10 + will_mod
-		self.defense = self.fortitude
-		self.melee_to_hit = self.strength_modifier
-		self.range_to_hit = self.dexterity_modifier
-		self.melee_damage = 0
-		self.range_damage = 0
-	def __get_str(self):
-		return self._str
-	def __set_str(self, value):
-		self._str = value
-		self.str_mod = self.calculate_modifier(value)
-		self.update_stats()
-	def __get_dex(self):
-		return self._dex
-	def __set_dex(self, value):
-		self._dex = value
-		self.dex_mod = self.calculate_modifier(value)
-		self.update_stats()		
-	def __get_con(self):
-		return self._con
-	def __set_con(self, value):
-		self._con = value
-		self.con_mod = self.calculate_modifier(value)
-		self.update_stats()
-	def __get_int(self):
-		return self._int
-	def __set_int(self, value):
-		self._int = value
-		self.int_mod = self.calculate_modifier(value)
-		self.update_stats()
-	def __get_wis(self):
-		return self._wis
-	def __set_wis(self, value):
-		self._wis = value
-		self.wis_mod = self.calculate_modifier(value)
-		self.update_stats()
-	def __get_cha(self):
-		return self._cha
-	def __set_cha(self, value):
-		self._cha = value
-		self.cha_mod = self.calculate_modifier(value)
-		self.update_stats()	
 
-	strength = property(__get_str, __set_str, None, "gets or sets strength of EntityNode")	
-	dexterity = property(__get_dex, __set_dex, None, "gets or sets dexterity of EntityNode")
-	constitution = property(__get_con, __set_con, None, "gets or sets constitution of EntityNode")
-	intelligence = property(__get_int, __set_int, None, "gets or sets intelligence of EntityNode")
-	wisdom = property(__get_wis, __set_wis, None, "gets or sets wisdom of EntityNode")
-	charisma = property(__get_cha, __set_cha, None, "gets or sets charisma of EntityNode")	
+
 
 
 class GeoGraph(object):

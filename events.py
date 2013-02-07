@@ -104,12 +104,12 @@ class BumpEntity(Event):
 class MeleeAttack(Event):
 	def apply(self, game):
 		attacker, target = self.args[0], self.args[1]
-		attack_roll = roll(attacker.melee_to_hit)
+		attack_roll = roll(attacker.attack.melee_to_hit)
 		if attack_roll == True:
 			MeleeDamage(attacker, target)
 		elif attack_roll == False:
 			FloatText('MISS', target, (250,250,250))
-		elif attack_roll >= target.reflex:	
+		elif attack_roll >= target.defense.reflex:
 			MeleeDamage(attacker, target)
 		else: 
 			FloatText('MISS', target, (250,250,250))
@@ -118,14 +118,14 @@ class MeleeAttack(Event):
 class MeleeDamage(Event):
 	def apply(self, game):
 		attacker, target = self.args[0], self.args[1]
-		damage_roll = roll(attacker.melee_damage)
+		damage_roll = roll(attacker.attack.melee_damage)
 		if damage_roll == True:
 			target.damage += 20
 			FloatText('CRITICAL!', target, (250,0,0))
 		elif damage_roll == False:
 			FloatText(0, target, (250,250,250))			
-		elif damage_roll > target.defense:
-			damage = damage_roll - target.defense
+		elif damage_roll > target.defense.resilience:
+			damage = damage_roll - target.defense.resilience
 			target.damage += damage
 			FloatText(-damage, target, (250,0,0))
 		else:
@@ -136,7 +136,7 @@ class MeleeDamage(Event):
 class CheckForDeath(Event):
 	def apply(self, game):
 		entity = self.args[0]
-		if entity.damage >= entity.fortitude:
+		if entity.damage >= entity.defense.fortitude:
 			FloatText('DEAD!', entity, (250,250,0))
 			EntityDeath(entity)
 
