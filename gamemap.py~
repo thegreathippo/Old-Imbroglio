@@ -1,5 +1,6 @@
 from images import *
 from widget import *
+from constructor import build_line
 
 
 class GameMap(Widget):
@@ -91,13 +92,15 @@ class GameMap(Widget):
 		if self.commands != []:
 			if self.commands[0] > 0 and self.commands[0] < 9:
 				self.handler.move_entity(self.focus, COMMANDS[self.commands[0]])
+			if self.commands[0] == 10:
+				self.handler.wait_entity(self.focus)
 			self.commands.pop(0)
 	def key_press(self, key):
 		self.commands.append(key)
 	def cursor_lclick(self, cursor):
 		for sprite in self.terrain.values():
 			if sprite.contains_point(cursor.rect.center):
-				print str(sprite.owner)
+				print str(len(build_line(sprite.owner.pos, self.focus.pos)))
 	def tick(self, focus):
 		camera = (self.focus.x - 9) * self.parent.cell, (self.focus.y - 9) * self.parent.cell
 		refresh = False

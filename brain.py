@@ -6,6 +6,7 @@ class Brain(object):
 		self.owner = owner
 		self.walls = set()
 		self.floors = set()
+		self.entities = set()
 		self.path = []
 		self.pathfinder = PathFinder(self.get_adjacents, self.get_cost, self.get_heuristic)
 	def observe(self):
@@ -20,14 +21,21 @@ class Brain(object):
 			else:
 				self.walls.discard(point)
 			if point in self.area.entities:
+				self.entities.add(point)
 				entity = self.area.entities[point]
-				if 'player' in entity and 'player' not in self.owner: 
-					self.path = list(self.pathfinder.compute_path(self.owner.pos, entity.pos))
-					self.path.pop(0)
+				if 'player' in entity and 'player' not in self.owner:
+					self.entities.discard(entity.pos)
+					self.path = []
+					if entity.pos in self.get_adjacents(self.owner.pos):
+						self.path = [entity.pos]
+					else:	
+						path = self.pathfinder.compute_path(self.owner.pos, entity.pos)
+						for point in path:
+							if point == self.owner.pos: continue
+							self.path.append(point)
 	def get_adjacents(self, point):
-		return set([pos for pos in M_NEIGHBORS[point] if pos in self.floors])
+		return [pos for pos in M_NEIGHBORS[point] if pos in self.floors and pos not in self.walls and pos not in self.entities]
 	def get_cost(self, start, end):
 		return 1
 	def get_heuristic(self, start, end):
-		return len(build_line(start, end))
-					
+		return len(build_line(start, end)) - 1

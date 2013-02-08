@@ -2,6 +2,7 @@ from images import *
 from widget import *
 
 
+
 class GameMap(Widget):
 	def init(self):
 		self.commands = []

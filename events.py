@@ -70,6 +70,7 @@ class SpendTime(Event):
 class EntityTurn(Event):
 	def apply(self, game):
 		entity, rel = self.args[0], random.choice(MOORE)
+		entity.brain.observe()		
 		if entity.brain.path != []:
 			step = entity.brain.path[0]
 			new_rel = step[0] - entity.x, step[1] - entity.y

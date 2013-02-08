@@ -41,7 +41,6 @@ class GUIStack(object):
 				pos, rel, buttons = event.dict['pos'], event.dict['rel'], event.dict['buttons']
 				self.accept_input('mouse_move', pos, rel, buttons)
 			if event.type == KEYDOWN:
-				print str(event.dict['key'])
 				if event.dict['key'] == 303 or event.dict['key'] == 304:
 					self.accept_input('shift_press')
 				if event.dict['key'] == 306 or event.dict['key'] == 305:

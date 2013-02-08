@@ -29,7 +29,7 @@ class Area(object):
 				self.features[point] = GeoNode(point)
 		possible_points = set(self.terrain.data).difference(set(self.features.data)).difference(chasm)
 		for point in possible_points:
-			if random.randrange(0,100) == 0:
+			if random.randrange(0,50) == 0:
 				self.entities[point] = EntityNode(point)
 		print str(len(self.entities.nodes))
 		self.fov_mask = self.features.get_mask()
