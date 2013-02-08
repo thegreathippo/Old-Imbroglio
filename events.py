@@ -77,11 +77,12 @@ class EntityTurn(Event):
 			entity.brain.path.pop(0)
 			MoveEntity(entity, new_rel)
 		else:
-			MoveEntity(entity, rel)
+			WaitEntity(entity)
 
 class WaitEntity(Event):
 	def apply(self, game):
 		entity = self.args[0]
+		entity.update()
 		SpendTime(entity, 5)
 
 class MoveEntity(Event):

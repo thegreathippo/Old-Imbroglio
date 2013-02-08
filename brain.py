@@ -23,15 +23,17 @@ class Brain(object):
 			if point in self.area.entities:
 				self.entities.add(point)
 				entity = self.area.entities[point]
-				if 'player' in entity and 'player' not in self.owner:
-					self.entities.discard(entity.pos)
-					self.path = []
-					path = self.pathfinder.compute_path(self.owner.pos, entity.pos)
-					for point in path:
-						if point == self.owner.pos: continue
-						self.path.append(point)
 			else:
 				self.entities.discard(point)
+		entities = self.area.entities.get_nodes(self.owner.fov)
+		for node in entities:
+			if 'player' in node and 'player' not in self.owner:
+				self.entities.discard(node.pos)
+				self.path = []
+				path = self.pathfinder.compute_path(self.owner.pos, node.pos)
+				for point in path:
+					if point == self.owner.pos: continue
+					self.path.append(point)			
 	def get_adjacents(self, point):
 		return [pos for pos in M_NEIGHBORS[point] if pos in self.floors and pos not in self.walls and pos not in self.entities]
 	def get_cost(self, start, end):
