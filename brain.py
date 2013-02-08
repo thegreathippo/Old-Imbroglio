@@ -26,13 +26,12 @@ class Brain(object):
 				if 'player' in entity and 'player' not in self.owner:
 					self.entities.discard(entity.pos)
 					self.path = []
-					if entity.pos in self.get_adjacents(self.owner.pos):
-						self.path = [entity.pos]
-					else:	
-						path = self.pathfinder.compute_path(self.owner.pos, entity.pos)
-						for point in path:
-							if point == self.owner.pos: continue
-							self.path.append(point)
+					path = self.pathfinder.compute_path(self.owner.pos, entity.pos)
+					for point in path:
+						if point == self.owner.pos: continue
+						self.path.append(point)
+			else:
+				self.entities.discard(point)
 	def get_adjacents(self, point):
 		return [pos for pos in M_NEIGHBORS[point] if pos in self.floors and pos not in self.walls and pos not in self.entities]
 	def get_cost(self, start, end):
