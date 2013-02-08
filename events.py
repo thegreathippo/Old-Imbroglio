@@ -104,6 +104,8 @@ class MoveEntity(Event):
 			game.stack[0].entities[entity].add_to_path(pos)
 			if pos not in game.stack.focus.fov:
 				game.stack[0].entities[entity].add_to_path(False)
+		if entity == game.stack.focus:
+			entity.brain.observe()
 		SpendTime(entity, 5)
 
 class BumpEntity(Event):

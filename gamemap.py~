@@ -1,6 +1,6 @@
 from images import *
 from widget import *
-from constructor import build_line
+
 
 
 class GameMap(Widget):
@@ -100,7 +100,7 @@ class GameMap(Widget):
 	def cursor_lclick(self, cursor):
 		for sprite in self.terrain.values():
 			if sprite.contains_point(cursor.rect.center):
-				print str(len(build_line(sprite.owner.pos, self.focus.pos)))
+				print str(sprite.owner)
 	def tick(self, focus):
 		camera = (self.focus.x - 9) * self.parent.cell, (self.focus.y - 9) * self.parent.cell
 		refresh = False
