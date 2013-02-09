@@ -127,6 +127,11 @@ class MeleeAttack(Event):
 		else: 
 			FloatText('MISS', target, (250,250,250))
 		SpendTime(attacker, 5)
+		if attacker in game.stack[0].entities:
+			step = target.x - attacker.x, target.y - attacker.y
+			half_step = attacker.x + (step[0] / 3.0), attacker.y + (step[1] / 3.0)
+			game.stack[0].entities[attacker].add_to_path(half_step)
+			game.stack[0].entities[attacker].add_to_path(attacker.pos)
 
 class MeleeDamage(Event):
 	def apply(self, game):

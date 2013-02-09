@@ -159,17 +159,16 @@ class Entity(Widget):
 		float_text = FloatText(self.parent, pos = xy, text = txt, color = clr, timer = 0)
 		self.parent.children.append(float_text)
 	def add_to_path(self, pos):
-		if pos is False:
-			self.path.append(pos)
+		if pos is False: self.path.append(pos)
 		else:	
-			xy = pos[0] * self.parent.parent.cell, pos[1] * self.parent.parent.cell
+			xy = int(pos[0] * self.parent.parent.cell), int(pos[1] * self.parent.parent.cell)
 			self.path.append(xy)
 	def follow_path(self):
 		self.moving = False
 		if self.path != []:
 			if self.path[0] != False:
 				self.moving = True
-				speed = self.parent.parent.cell / 2 + len(self.path)
+				speed = self.parent.parent.cell / 4 + len(self.path)
 				step = get_step(self.path[0], self.rect.topleft, speed)
 				self.rect.topleft = self.rect.left + step[0], self.rect.top + step[1]
 				if self.rect.topleft == self.path[0]:

@@ -1,5 +1,5 @@
 from pathfinder import PathFinder
-from constructor import M_NEIGHBORS, build_line
+from constructor import M_NEIGHBORS, N_NEIGHBORS, build_line
 
 class Brain(object):
 	def __init__(self, owner):
@@ -33,7 +33,7 @@ class Brain(object):
 				path = self.pathfinder.compute_path(self.owner.pos, node.pos)
 				for point in path:
 					if point == self.owner.pos: continue
-					self.path.append(point)			
+					self.path.append(point)
 	def get_adjacents(self, point):
 		return [pos for pos in M_NEIGHBORS[point] if pos in self.floors and pos not in self.walls and pos not in self.entities]
 	def get_cost(self, start, end):
