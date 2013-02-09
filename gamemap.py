@@ -157,24 +157,27 @@ class Entity(Widget):
 		size = get_text_size(txt)
 		xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]
 		float_text = FloatText(self.parent, pos = xy, text = txt, color = clr, timer = 0)
-		self.parent.children.append(float_text)
-	def add_to_path(self, pos):
-		if pos is False: self.path.append(pos)
+		self.add_to_path(float_text)
+	def add_to_path(self, obj):
+		if obj is False or hasattr(obj, 'image'): self.path.append(obj)
 		else:	
-			xy = int(pos[0] * self.parent.parent.cell), int(pos[1] * self.parent.parent.cell)
+			xy = int(obj[0] * self.parent.parent.cell), int(obj[1] * self.parent.parent.cell)
 			self.path.append(xy)
 	def follow_path(self):
 		self.moving = False
 		if self.path != []:
-			if self.path[0] != False:
+			if hasattr(self.path[0], 'image'):
+				self.parent.children.append(self.path[0])
+				self.path.pop(0)				
+			elif self.path[0] == False:
+				del self.parent.entities[self.owner]
+			else:
 				self.moving = True
 				speed = self.parent.parent.cell / 4 + len(self.path)
 				step = get_step(self.path[0], self.rect.topleft, speed)
 				self.rect.topleft = self.rect.left + step[0], self.rect.top + step[1]
 				if self.rect.topleft == self.path[0]:
 					self.path.pop(0)
-			else:
-				del self.parent.entities[self.owner]
 			return True
 		
 
