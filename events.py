@@ -162,7 +162,7 @@ class EntityDeath(Event):
 	def apply(self, game):
 		entity = self.args[0]
 		if entity in game.stack[0].entities:
-			del game.stack[0].entities[entity]
+			game.stack[0].entities[entity].add_to_path(False)
 		entity.die()
 		game.turn_queue.sort()		
 
