@@ -168,7 +168,10 @@ class Entity(Widget):
 		if self.path != []:
 			if hasattr(self.path[0], 'image'):
 				self.parent.children.append(self.path[0])
-				self.path.pop(0)				
+				size = get_text_size(self.path[0].text)
+				xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]
+				self.path[0].pos = xy
+				self.path.pop(0)
 			elif self.path[0] == False:
 				del self.parent.entities[self.owner]
 			else:
@@ -190,7 +193,7 @@ class FloatText(Widget):
 		return pos[0] + self.parent.camera[0], pos[1] + self.parent.camera[1]
 	def tick(self, focus):
 		self.timer += 1
-		new_color = self.color[0] - self.timer, self.color[1], self.color[2]
+		new_color = darken(self.color, 5)
 		new_pos = self.pos[0], self.pos[1] - (self.parent.parent.cell / 20)
 		self.overwrite(pos = new_pos, color = new_color)
 		if self.timer > 20:

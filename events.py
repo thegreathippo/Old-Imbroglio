@@ -149,13 +149,16 @@ class MeleeDamage(Event):
 		else:
 			FloatText(0, target, (250,250,250))
 		if target != game.stack.focus:
+			if attacker == game.stack.focus:
+				if target.damage >= target.defense.fortitude:
+					FloatText(str(target.experience) + ' xp', target, (250,250,0))
+					attacker.experience += target.experience
 			CheckForDeath(target)
 
 class CheckForDeath(Event):
 	def apply(self, game):
 		entity = self.args[0]
 		if entity.damage >= entity.defense.fortitude:
-			FloatText('DEAD!', entity, (250,250,0))
 			EntityDeath(entity)
 
 class EntityDeath(Event):

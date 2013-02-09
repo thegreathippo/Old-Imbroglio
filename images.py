@@ -69,4 +69,10 @@ def get_step(xy1, xy2, step = 4):
 	n_vec = int(round(x / length)), int(round(y / length))
 	return n_vec[0] * step, n_vec[1] * step
 
+def darken(color, degree):
+	r, g, b = color[0] - degree, color[1] - degree, color[2] - degree
+	if r < 0: r = 0
+	if g < 0: g = 0
+	if b < 0: b = 0
+	return r, g, b
 
