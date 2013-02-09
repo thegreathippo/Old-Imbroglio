@@ -153,7 +153,17 @@ class MeleeDamage(Event):
 				if target.damage >= target.defense.fortitude:
 					FloatText(str(target.experience) + ' xp', target, (250,250,0))
 					attacker.experience += target.experience
+					CheckForLevelUp(attacker)
 			CheckForDeath(target)
+class CheckForLevelUp(Event):
+	def apply(self, game):
+		entity = self.args[0]
+		goal_post = entity.level * 300
+		if entity.experience >= goal_post:
+			FloatText('Level Up!', entity, (0,0,250))
+			entity.level += 1
+			entity.ability.strength += 2
+			entity.ability.constitution += 2
 
 class CheckForDeath(Event):
 	def apply(self, game):

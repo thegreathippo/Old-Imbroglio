@@ -168,7 +168,7 @@ class Entity(Widget):
 		if self.path != []:
 			if hasattr(self.path[0], 'image'):
 				self.parent.children.append(self.path[0])
-				size = get_text_size(txt)
+				size = get_text_size(self.path[0].text)
 				xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]
 				self.path[0].pos = xy
 				self.path.pop(0)
