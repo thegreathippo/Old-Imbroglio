@@ -10,7 +10,8 @@ class Brain(object):
 		self.path = []
 		self.pathfinder = PathFinder(self.get_adjacents, self.get_cost, self.get_heuristic)
 	def observe(self):
-		self.area = self.owner.owner.owner		
+		self.area = self.owner.owner.owner
+		self.entities = set()
 		for point in self.owner.fov:
 			if point in self.area.terrain and self.area.terrain[point]['chasm'] == False:
 				self.floors.add(point)
@@ -22,9 +23,6 @@ class Brain(object):
 				self.walls.discard(point)
 			if point in self.area.entities:
 				self.entities.add(point)
-				entity = self.area.entities[point]
-			else:
-				self.entities.discard(point)
 		entities = self.area.entities.get_nodes(self.owner.fov)
 		for node in entities:
 			if 'player' in node and 'player' not in self.owner:
@@ -34,6 +32,7 @@ class Brain(object):
 				for point in path:
 					if point == self.owner.pos: continue
 					self.path.append(point)
+	
 	def get_adjacents(self, point):
 		return [pos for pos in M_NEIGHBORS[point] if pos in self.floors and pos not in self.walls and pos not in self.entities]
 	def get_cost(self, start, end):
