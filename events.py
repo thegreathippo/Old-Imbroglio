@@ -70,7 +70,7 @@ class SpendTime(Event):
 class EntityTurn(Event):
 	def apply(self, game):
 		entity, rel = self.args[0], random.choice(MOORE)
-		entity.brain.observe()		
+		entity.brain.observe()
 		if entity.brain.path != []:
 			step = entity.brain.path[0]
 			new_rel = step[0] - entity.x, step[1] - entity.y
@@ -155,12 +155,13 @@ class MeleeDamage(Event):
 					attacker.experience += target.experience
 					CheckForLevelUp(attacker)
 			CheckForDeath(target)
+
 class CheckForLevelUp(Event):
 	def apply(self, game):
 		entity = self.args[0]
 		goal_post = entity.level * 300
 		if entity.experience >= goal_post:
-			FloatText('Level Up!', entity, (0,0,250))
+			FlashText('Level Up!', entity, (0,0,250))
 			entity.level += 1
 			entity.ability.strength += 2
 			entity.ability.constitution += 2
@@ -183,7 +184,13 @@ class FloatText(Event):
 	def apply(self, game):
 		text, entity, color = str(self.args[0]), self.args[1], self.args[2]
 		if entity in game.stack[0].entities:
-			game.stack[0].entities[entity].float_text(text, color)		
+			game.stack[0].entities[entity].float_text(text, color)
+
+class FlashText(Event):
+	def apply(self, game):
+		text, entity, color = str(self.args[0]), self.args[1], self.args[2]
+		if entity in game.stack[0].entities:
+			game.stack[0].entities[entity].flash_text(text, color)	
 
 def roll(modifier = 0):
 	result = random.randrange(1, 21)

@@ -158,6 +158,11 @@ class Entity(Widget):
 		xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]
 		float_text = FloatText(self.parent, pos = xy, text = txt, color = clr, timer = 0)
 		self.add_to_path(float_text)
+	def flash_text(self, txt, clr):
+		size = get_text_size(txt)
+		xy = self.rect.centerx - (size[0] / 2), self.rect.top - size[1]
+		flash_text = FlashText(self.parent, pos = xy, text = txt, color = clr, timer = 0)
+		self.add_to_path(flash_text)
 	def add_to_path(self, obj):
 		if obj is False or hasattr(obj, 'image'): self.path.append(obj)
 		else:	
@@ -168,7 +173,7 @@ class Entity(Widget):
 		if self.path != []:
 			if hasattr(self.path[0], 'image'):
 				self.parent.children.append(self.path[0])
-				size = get_text_size(self.path[0].text)
+				size = get_text_size(txt)
 				xy = self.rect.centerx - (size[0] / 2), self.rect.bottom - size[1]
 				self.path[0].pos = xy
 				self.path.pop(0)
@@ -201,5 +206,17 @@ class FloatText(Widget):
 			return True
 		return True		
 
+class FlashText(Widget):
+	def init(self):
+		self.rect = pygame.Rect(self.pos, self.parent.parent.cell_size)
+		self.image = get_text(self.text, self.color)
+	def translate(self, pos):
+		return pos[0] + self.parent.camera[0], pos[1] + self.parent.camera[1]
+	def tick(self, focus):
+		self.timer += 1
 
+		if self.timer > 20:
+			self.parent.children.remove(self)
+			return True
+		return True		
 		
