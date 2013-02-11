@@ -63,6 +63,7 @@ class Event(object):
 class SpendTime(Event):
 	def apply(self, game):
 		entity, time = self.args[0], self.args[1]
+		if time < 1: time = 1
 		entity.time += -time
 		game.turn_queue.sort()
 
@@ -117,12 +118,12 @@ class BumpEntity(Event):
 class MeleeAttack(Event):
 	def apply(self, game):
 		attacker, target = self.args[0], self.args[1]
-		attack_roll = roll(attacker.attack.melee_to_hit)
+		attack_roll = roll(attacker.melee_to_hit)
 		if attack_roll == True:
 			MeleeDamage(attacker, target)
 		elif attack_roll == False:
 			FloatText('MISS', target, (250,250,250))
-		elif attack_roll >= target.defense.reflex:
+		elif attack_roll >= target.dodge:
 			MeleeDamage(attacker, target)
 		else: 
 			FloatText('MISS', target, (250,250,250))
@@ -136,21 +137,21 @@ class MeleeAttack(Event):
 class MeleeDamage(Event):
 	def apply(self, game):
 		attacker, target = self.args[0], self.args[1]
-		damage_roll = roll(attacker.attack.melee_damage)
+		damage_roll = roll(attacker.melee_damage)
 		if damage_roll == True:
 			target.damage += 20
 			FloatText('CRITICAL!', target, (250,0,0))
 		elif damage_roll == False:
 			FloatText(0, target, (250,250,250))			
-		elif damage_roll > target.defense.resilience:
-			damage = damage_roll - target.defense.resilience
+		elif damage_roll > target.soak:
+			damage = damage_roll - target.soak
 			target.damage += damage
 			FloatText(-damage, target, (250,0,0))
 		else:
 			FloatText(0, target, (250,250,250))
 		if target != game.stack.focus:
 			if attacker == game.stack.focus:
-				if target.damage >= target.defense.fortitude:
+				if target.damage >= target.soak:
 					FloatText(str(target.experience) + ' xp', target, (250,250,0))
 					attacker.experience += target.experience
 					CheckForLevelUp(attacker)
@@ -163,13 +164,11 @@ class CheckForLevelUp(Event):
 		if entity.experience >= goal_post:
 			FlashText('Level Up!', entity, (0,0,250))
 			entity.level += 1
-			entity.ability.strength += 2
-			entity.ability.constitution += 2
 
 class CheckForDeath(Event):
 	def apply(self, game):
 		entity = self.args[0]
-		if entity.damage >= entity.defense.fortitude:
+		if entity.damage >= entity.soak:
 			EntityDeath(entity)
 
 class EntityDeath(Event):

@@ -67,6 +67,7 @@ class EntityNode(GeoNode):
 		self.attack = Attacks(self)
 		self.damage = 0
 		self.experience = 100
+		self.level = 1
 	def die(self):
 		self.owner.nodes.remove(self)
 		del self.owner[self.pos]

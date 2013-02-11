@@ -1,6 +1,5 @@
 import math, pygame, random
 from fov import fov
-from sheet import Abilities, Modifiers, Defenses, Attacks
 from brain import Brain
 
 class Node(object):
@@ -61,12 +60,12 @@ class EntityNode(GeoNode):
 	def init(self):
 		self.time = 0
 		self.inventory = RectGraph((5,5))
-		self.ability = Abilities(self)
-		self.modifier = Modifiers(self)
-		self.defense = Defenses(self)
-		self.attack = Attacks(self)
 		self.damage = 0
 		self.experience = 100
+		self.dodge = 10
+		self.soak = 10
+		self.melee_to_hit = 0
+		self.melee_damage = 0
 		self.level = 1
 	def die(self):
 		self.owner.nodes.remove(self)
